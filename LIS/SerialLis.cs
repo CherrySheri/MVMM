@@ -67,7 +67,7 @@ namespace LIS {
           UpdateSerialStatus("offline", false);
         }
       } catch (Exception ex) {
-        Console.WriteLine(ex.Message);
+        UpdateSerialStatus(ex.Message, false);
       }
       return isSerialStarted;
     }

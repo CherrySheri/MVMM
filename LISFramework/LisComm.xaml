@@ -6,12 +6,9 @@
              xmlns:local="clr-namespace:LISFramework"
              xmlns:VM="clr-namespace:LISFramework.ViewModel"
              xmlns:xceed="http://schemas.xceed.com/wpf/xaml/toolkit"
-             mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1500" Background="White">
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1500" Background="White">
   <UserControl.Resources>
-
     <VM:LisCommVM x:Key="lisCommVM"/>
-
   </UserControl.Resources>
   <Grid DataContext="{Binding Source={StaticResource ResourceKey=lisCommVM}}">
     <Grid.RowDefinitions>
@@ -55,30 +52,21 @@
 
     </StackPanel>
     <StackPanel Grid.Row="2">
-      <TabControl x:Name="tbControlLog"  TabStripPlacement="Top" Grid.Row="0">
-        <TabItem x:Name="tbSys">
-          <TabItem.Header>
-            <TextBlock Text="Tcp System" TextWrapping="Wrap" FontSize="16" Width="84"/>
-          </TabItem.Header>
-          <StackPanel Orientation="Vertical">
-            <ListBox x:Name="lbTcpSys" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150"/>
-            <ListBox x:Name="lbTcpComm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150"/>
-          </StackPanel>
-        </TabItem>
-        <TabItem x:Name="tbSerialSys">
-          <TabItem.Header>
-            <TextBlock Text="Serial System " FontSize="16" TextWrapping="Wrap" Width="100"/>
-          </TabItem.Header>
+      <TabControl x:Name="tbControlLog"  TabStripPlacement="Top">
+        <TabItem x:Name="tbSys" Header="Tcp System">
           <StackPanel>
-            <ListBox x:Name="lbSerialSys" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="10" Height="150"/>
-            <ListBox x:Name="lbSerialComm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150"/>
+            <ListBox x:Name="lblTcpStatus" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478"/>
+            <ListBox x:Name="lbTcpComm" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"   Width="1478"/>
           </StackPanel>
         </TabItem>
-        <TabItem x:Name="tabLog" Margin="0,0,-3,0">
-          <TabItem.Header>
-            <TextBlock Text="Log " TextWrapping="Wrap" FontSize="16"/>
-          </TabItem.Header>
-          <ListBox x:Name="lbLog" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="300"/>
+        <TabItem x:Name="tbSerialSys" Header="Serial System">
+          <StackPanel>
+            <ListBox x:Name="lbSerialSys" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" ItemsSource="{Binding SerialStatusCollection}"/>
+            <ListBox x:Name="lbSerialComm" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Width="1478" ItemsSource="{Binding SerialMessageList}"/>
+          </StackPanel>
+        </TabItem>
+        <TabItem x:Name="tabLog" Header="Log">
+          <ListBox x:Name="lbLog" HorizontalAlignment="Left" VerticalAlignment="Center" Height="500" Width="1478"/>
         </TabItem>
       </TabControl>
     </StackPanel>

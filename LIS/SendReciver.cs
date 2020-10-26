@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace LIS {
@@ -15,16 +17,20 @@ namespace LIS {
 
     public int FrmeRetryInSeconds { get; set; } = 12;
     private int _FrameSendIntervalInSeconds { get; set; } = 1;
+    private string _SenderMsg { get; set; }
+    private string _ReceivedMsg { get; set; }
+    private ConnectionType _ConnectionType = ConnectionType.Serial;
+    private TcpConnectionMode _TcpConnMode = TcpConnectionMode.C;
+
+
     public CommunicationFields CommFields { get; set; }
+    public SerialMessageStatus serialMsgStatusColl { get; set; } 
+    public TcpMesageStatus messageStatusColl { get; set; }
+
 
     private System.Threading.Timer Timer;
     BackgroundWorker _ReceivedBgWorker;
-
-    private string _SenderMsg { get; set; }
-    private string _ReceivedMsg { get; set; }
-
-    private ConnectionType _ConnectionType = ConnectionType.Serial;
-    private TcpConnectionMode _TcpConnMode = TcpConnectionMode.C;
+    
 
     private TcpServerLis _TcpServerLis { get; set; }
     private TcpClientLis _TcpClientLis { get; set; }
@@ -33,24 +39,29 @@ namespace LIS {
     private bool _isConnectedToMachine { get; set; } 
 
 
-    public SendReciver(CommunicationFields commFields) {
+    public SendReciver(CommunicationFields commFields, SerialMessageStatus serialMsgStatus, TcpMesageStatus messageStatus) {
       if (commFields != null) {
         _ConnectionType = commFields.ConnType;
         if (_ConnectionType == ConnectionType.Tcp) {
           _TcpConnMode = CommFields.TcpMode;
         }
         CommFields = commFields;
-        StartConnection();
-        StartDispatcherTimer();
-        StartBackgroundWorker();
+        this.serialMsgStatusColl = serialMsgStatus;
+        this.messageStatusColl   = messageStatus;
       }
+    }
+
+    public void InitializeConnection() {
+      StartConnection();
+      StartDispatcherTimer();
+      StartBackgroundWorker();
     }
 
     #region DispatcherTimer Initialization
     private void StartDispatcherTimer() {
-      Timer = new System.Threading.Timer(new TimerCallback(SendMessageAfterParticularDelay),
-        null, TimeSpan.FromSeconds(_FrameSendIntervalInSeconds),
-        TimeSpan.FromSeconds(_FrameSendIntervalInSeconds));
+      //Timer = new System.Threading.Timer(new TimerCallback(SendMessageAfterParticularDelay),
+      //  null, TimeSpan.FromSeconds(_FrameSendIntervalInSeconds),
+      //  TimeSpan.FromSeconds(_FrameSendIntervalInSeconds));
     }
 
 
@@ -157,27 +168,41 @@ namespace LIS {
 
 
     #region Serial Msg And Status
-
+    SynchronizationContext capturedSynchronizationContext = SynchronizationContext.Current;
     private void UpdateSerialMessage(string message) {
       _ReceivedMsg = message;
+      lock (serialMsgStatusColl._messgeLock) {
+        serialMsgStatusColl.MessageCollection.Add(message);
+      }
     }
 
     private void UpdateSerialStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
+      lock (serialMsgStatusColl._statusLock) {
+        serialMsgStatusColl.StatusCollection.Add(status);
+      }
+
+      
+      //Task.Run(() =>
+      //  capturedSynchronizationContext.Post(state => serialMsgStatusColl.StatusCollection.Add(status), null)
+      //);
+
+      //serialMsgStatusColl.StatusCollection.Add(ConvertCtrlCharToStr(status));
+
     }
 
     #endregion Serial Msg And Status
 
     private void SendMeesageToMachine() {
-      //if (_ConnectionType == ConnectionType.Serial) {
-      //  _SerialLis.SendMessage(_SenderMsg);
-      //} else if (_ConnectionType == ConnectionType.Tcp) {
-      //  if (_TcpConnMode == TcpConnectionMode.C) {
-      //    _TcpClientLis.Send(_SenderMsg);
-      //  } else if (_TcpConnMode == TcpConnectionMode.S) {
-      //    _TcpServerLis.Send(_SenderMsg);
-      //  }
-      //}
+      if (_ConnectionType == ConnectionType.Serial) {
+        _SerialLis.SendMessage(_SenderMsg);
+      } else if (_ConnectionType == ConnectionType.Tcp) {
+        if (_TcpConnMode == TcpConnectionMode.C) {
+          _TcpClientLis.Send(_SenderMsg);
+        } else if (_TcpConnMode == TcpConnectionMode.S) {
+          _TcpServerLis.Send(_SenderMsg);
+        }
+      }
     }
 
     public void SendOrderToMachine() {
@@ -293,6 +318,34 @@ namespace LIS {
 
     public SendReciver.ConnectionType ConnType { get; set; }
 
-
   }
+
+  public class SerialMessageStatus {
+    public SerialMessageStatus() {
+      
+      MessageCollection = new ObservableCollection<string>();
+      BindingOperations.EnableCollectionSynchronization(MessageCollection, _messgeLock);
+      StatusCollection = new ObservableCollection<string>();
+      BindingOperations.EnableCollectionSynchronization(StatusCollection, _statusLock);
+    }
+
+    public object _messgeLock = new object();
+    public object _statusLock = new object();
+    
+
+    public ObservableCollection<string> MessageCollection { get; set; }
+    public ObservableCollection<string> StatusCollection { get; set; }
+  }
+
+  public class TcpMesageStatus {
+
+    public TcpMesageStatus() {
+      MessageCollection = new ObservableCollection<string>();
+      StatusCollection = new ObservableCollection<string>();
+    }
+
+    public ObservableCollection<string> MessageCollection { get; set; }
+    public ObservableCollection<string> StatusCollection { get; set; }
+  }
+
 }

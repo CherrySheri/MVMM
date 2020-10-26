@@ -39,34 +39,34 @@
         <StackPanel Orientation="Horizontal">
           <StackPanel Margin="5,10,0,0">
             <TextBlock x:Name="lblPort" Text="Port :" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"/>
-            <xceed:IntegerUpDown x:Name="tbxPort" Minimum="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Text="{Binding SerialF.Port}"/>
+            <xceed:IntegerUpDown x:Name="tbxPort" Minimum="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Text="{Binding CommFields.Port}"/>
           </StackPanel>
           <StackPanel Margin="5,10,0,0">
             <TextBlock x:Name="lblBaudRate" Text="Baud Rate :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <ComboBox x:Name="cbBaudRate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
-                      ItemsSource="{Binding BaudRateList}" SelectedItem="{Binding SerialF.BaudRate}" IsSynchronizedWithCurrentItem="True"/>
+                      ItemsSource="{Binding BaudRateList}" SelectedItem="{Binding CommFields.BaudRate}" IsSynchronizedWithCurrentItem="True"/>
           </StackPanel>
           <StackPanel Margin="5,10,0,0">
             <TextBlock x:Name="lblParity" Text="Parity :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <ComboBox x:Name="cbParity" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65"
-                      ItemsSource="{Binding ParityList}" SelectedItem="{Binding SerialF.Parity}" IsSynchronizedWithCurrentItem="True"/>
+                      ItemsSource="{Binding ParityList}" SelectedItem="{Binding CommFields.Parity}" IsSynchronizedWithCurrentItem="True"/>
           </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
           <StackPanel Margin="5,10,0,0">
             <TextBlock x:Name="lblDataBit" Text="Data Bit :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <ComboBox x:Name="cbDataBit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
-                      ItemsSource="{Binding DataBitList}" SelectedItem="{Binding SerialF.DataBit}" IsSynchronizedWithCurrentItem="True"/>
+                      ItemsSource="{Binding DataBitList}" SelectedItem="{Binding CommFields.DataBit}" IsSynchronizedWithCurrentItem="True"/>
           </StackPanel>
           <StackPanel Margin="5,10,0,0">
             <TextBlock x:Name="lblStopBit" Text="Stop Bit :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <ComboBox x:Name="cbStopBit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" 
-                      ItemsSource="{Binding StopBitList}" SelectedItem="{Binding SerialF.StopBit}" IsSynchronizedWithCurrentItem="True"/>
+                      ItemsSource="{Binding StopBitList}" SelectedItem="{Binding CommFields.StopBit}" IsSynchronizedWithCurrentItem="True"/>
           </StackPanel>
           <StackPanel Margin="5,10,0,0">
             <TextBlock x:Name="lblFlowCtrl" Text="Flow Control :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <ComboBox x:Name="cbFlowCtrl" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
-                      ItemsSource="{Binding FlowControlList}" SelectedItem="{Binding SerialF.FlowControl}" IsSynchronizedWithCurrentItem="True"/>
+                      ItemsSource="{Binding FlowControlList}" SelectedItem="{Binding CommFields.FlowControl}" IsSynchronizedWithCurrentItem="True"/>
           </StackPanel>
         </StackPanel>
       </StackPanel>
@@ -92,7 +92,7 @@
         <StackPanel Margin="5,10,0,0">
           <TextBlock x:Name="lblType" Text="Type :(Client/Serer)" HorizontalAlignment="Left" VerticalAlignment="Top"/>
           <ComboBox x:Name="cbTcpType" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"
-                    ItemsSource="{Binding TcpConnModeIEnumerable}" SelectedItem="{Binding TcpConnMode}" IsSynchronizedWithCurrentItem="True"/>
+                    ItemsSource="{Binding TcpConnModeIEnumerable}" SelectedItem="{Binding CommFields.TcpMode}" IsSynchronizedWithCurrentItem="True"/>
         </StackPanel>
       </StackPanel>
     </StackPanel>
