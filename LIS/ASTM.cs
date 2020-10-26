@@ -136,7 +136,7 @@ namespace LIS {
     }
 
     public override string CreateRequestRecord() {
-      string reqInfo = "2" + RequestR + Sepreator + "1" + "ALL" + Sepreator + Sepreator
+      string reqInfo = "2" + RequestR + Sepreator + "1" + Sepreator + "ALL" + Sepreator + Sepreator
                       + "ALL" + Sepreator + Sepreator + DateTime.Now.ToString("yyyyMMdd") 
                       + "000000"
                       + Sepreator + DateTime.Now.ToString("yyyyMMdd") + "000000";
