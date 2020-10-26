@@ -23,7 +23,7 @@ namespace LISFramework.ViewModel {
     private void SendOrder_Execute() {
       //Load Serial Json File
       JsonWR jsonR = new JsonWR();
-      SerialFields serialF = jsonR.ReadJsonFile();
+      CommunicationFields serialF = jsonR.ReadJsonFile();
       SendReciver sendR = new SendReciver(SendReciver.ConnectionType.Serial, serialF);
       sendR.SendOrderToMachine();
     }

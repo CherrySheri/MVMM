@@ -20,7 +20,7 @@
       <StackPanel>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" Text="ConnectionType"/>
         <ComboBox x:Name="cmbConnType" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" Width="150"
-                  ItemsSource="{Binding ConnectionTypeIEnumerable}" SelectedItem="{Binding ConnectionType}" IsSynchronizedWithCurrentItem="True"/>
+                  ItemsSource="{Binding ConnectionTypeIEnumerable}" SelectedItem="{Binding CommFields.ConnType}" IsSynchronizedWithCurrentItem="True"/>
       </StackPanel>
       <Button x:Name="btnSave" Width="100" Height="40" Content="Save" FontWeight="Bold" Command="{Binding SaveCommand}"/>
     </StackPanel>
@@ -83,11 +83,11 @@
         </StackPanel.Style>
         <StackPanel Margin="5,10,0,0">
           <TextBlock x:Name="lblHost" Text="Host :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-          <TextBox x:Name="tbHost" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="131"/>
+          <TextBox x:Name="tbHost" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="131" Text="{Binding CommFields.TcpIpAddress}"/>
         </StackPanel>
         <StackPanel Margin="5,10,0,0">
           <TextBlock x:Name="lblTcpPort" Text="Port :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-          <TextBox x:Name="tbPort" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="81"/>
+          <TextBox x:Name="tbPort" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="81" Text="{Binding CommFields.TcpPort}"/>
         </StackPanel>
         <StackPanel Margin="5,10,0,0">
           <TextBlock x:Name="lblType" Text="Type :(Client/Serer)" HorizontalAlignment="Left" VerticalAlignment="Top"/>

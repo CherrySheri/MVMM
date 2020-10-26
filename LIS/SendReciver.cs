@@ -15,8 +15,7 @@ namespace LIS {
 
     public int FrmeRetryInSeconds { get; set; } = 12;
     private int _FrameSendIntervalInSeconds { get; set; } = 1;
-    public SerialFields SerialFields { get; set; }
-    public TcpFields TcpFields { get; set; }
+    public CommunicationFields CommFields { get; set; }
 
     private System.Threading.Timer Timer;
     BackgroundWorker _ReceivedBgWorker;
@@ -34,10 +33,10 @@ namespace LIS {
     private bool _isConnectedToMachine { get; set; } 
 
 
-    public SendReciver(ConnectionType connType, SerialFields serialF = null, TcpFields tcpF = null, TcpConnectionMode tcpMode = TcpConnectionMode.C) {
+    public SendReciver(ConnectionType connType, CommunicationFields commFields) {
       _ConnectionType = connType;
-      _TcpConnMode = tcpMode;
-      SerialFields = serialF;
+      _TcpConnMode = CommFields.TcpMode;
+      CommFields = commFields;
       StartConnection();
       StartDispatcherTimer();
       StartBackgroundWorker();
@@ -108,18 +107,18 @@ namespace LIS {
 
     public void StartConnection() {
       if (_ConnectionType == ConnectionType.Serial) {
-        _SerialLis = new SerialLis(SerialFields);
+        _SerialLis = new SerialLis(CommFields);
         _SerialLis.UpdateSerialMessage += new SerialLis.EventHandlerSerialMessage(UpdateSerialMessage);
         _SerialLis.UpdateSerialStatus += new SerialLis.EventHandlerSerialStatus(UpdateSerialStatus);
         _SerialLis.StartSerialPort();
       } else if (_ConnectionType == ConnectionType.Tcp) {
         if (_TcpConnMode == TcpConnectionMode.C) {
-          _TcpClientLis = new TcpClientLis(TcpFields);
+          _TcpClientLis = new TcpClientLis(CommFields);
           _TcpClientLis.UpdateTcpMessage += new TcpClientLis.EventHandlerTcpMessage(UpdateTcpClientMessage);
           _TcpClientLis.UpdateTcpStatus += new TcpClientLis.EventHandlerTcpStatus(UpdateTcpClientStatus);
           _TcpClientLis.StartClient();
         } else if (_TcpConnMode == TcpConnectionMode.S) {
-          _TcpServerLis = new TcpServerLis(TcpFields);
+          _TcpServerLis = new TcpServerLis(CommFields);
           _TcpServerLis.UpdateTcpMessage += new TcpServerLis.EventHandlerTcpMessage(UpdateTcpServerMessage);
           _TcpServerLis.UpdateTcpStatus += new TcpServerLis.EventHandlerTcpStatus(UpdateTcpServerStatus);
           _TcpServerLis.StartServer();
@@ -207,8 +206,6 @@ namespace LIS {
       return orderList;
     }
 
-
-
     private string ConvertCtrlCharToStr(string ctrlChar) {
       ctrlChar = ctrlChar.Replace(SOH, "<SOH>");
       ctrlChar = ctrlChar.Replace(STX, "<STX>");
@@ -254,14 +251,6 @@ namespace LIS {
     readonly string GS = char.ConvertFromUtf32(29);
     readonly string RS = char.ConvertFromUtf32(30);
 
-
-
-
-
-
-
-
-
     public enum ConnectionType {
       Serial,
       Tcp
@@ -279,7 +268,7 @@ namespace LIS {
   }
 
   [Serializable]
-  public class SerialFields {
+  public class CommunicationFields {
     public string BaudRate { get; set; }
     public string Port { get; set; }
     public string Parity { get; set; }
@@ -293,11 +282,13 @@ namespace LIS {
     public List<string> ParityList = Enum.GetNames(typeof(System.IO.Ports.Parity)).ToList();
     public List<string> StopBitList = Enum.GetNames(typeof(System.IO.Ports.StopBits)).ToList();
 
-  }
+    public string TcpIpAddress { get; set; }
+    public int TcpPort { get; set; }
 
-  [Serializable]
-  public class TcpFields {
-    public string IpAddress { get; set; } 
-    public int Port{get;set;}
+    public SendReciver.TcpConnectionMode TcpMode { get; set; }
+
+    public SendReciver.ConnectionType ConnType { get; set; }
+
+
   }
 }

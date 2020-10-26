@@ -25,9 +25,9 @@ namespace LIS {
     public int Port { get; set; }
 
 
-    public TcpClientLis(TcpFields tcpFields) {
-      IpAddress = tcpFields.IpAddress; 
-      Port = tcpFields.Port;
+    public TcpClientLis(CommunicationFields commFields) {
+      IpAddress = commFields.TcpIpAddress; 
+      Port = commFields.TcpPort;
     }
 
     public void StartClient() {

@@ -16,54 +16,27 @@ namespace LIS {
       }
     }
 
-    string GetTcpJson {
+    string GetCommJsonFile {
       get {
-        return Path.Combine(GetAppDir, "TcpFields.json");
+        return Path.Combine(GetAppDir, "Communication.json");
       }
     }
 
-    string GetSerialJson {
-      get {
-        return Path.Combine(GetAppDir, "SerialFields.json");
+    public void WriteSerialJsonFile(CommunicationFields commFields) {
+      if (File.Exists(GetCommJsonFile)) {
+        File.Delete(GetCommJsonFile);
       }
-    }
-
-
-    public void WriteTcpJsonFile(TcpFields tcpFields) {
-      DeleteExisingFiles();
       //open file stream
-      using (StreamWriter file = File.CreateText(GetTcpJson)) {
+      using (StreamWriter file = File.CreateText(GetCommJsonFile)) {
         JsonSerializer serializer = new JsonSerializer();
         //serialize object directly into file stream
-        serializer.Serialize(file, tcpFields);
+        serializer.Serialize(file, commFields);
       }
     }
 
-    public void WriteSerialJsonFile(SerialFields serialF) {
-      DeleteExisingFiles();
-      //open file stream
-      using (StreamWriter file = File.CreateText(GetSerialJson)) {
-        JsonSerializer serializer = new JsonSerializer();
-        //serialize object directly into file stream
-        serializer.Serialize(file, serialF);
-      }
-    }
-
-    public SerialFields ReadJsonFile() {
-      SerialFields serialF = JsonConvert.DeserializeObject<SerialFields>(File.ReadAllText(GetSerialJson));
+    public CommunicationFields ReadJsonFile() {
+      CommunicationFields serialF = JsonConvert.DeserializeObject<CommunicationFields>(File.ReadAllText(GetCommJsonFile));
       return serialF;
     }
-
-    public void DeleteExisingFiles() {
-      if (File.Exists(GetTcpJson)) {
-        File.Delete(GetTcpJson);
-      }
-      if (File.Exists(GetSerialJson)) {
-        File.Delete(GetSerialJson);
-      }
-    }
-
-
-
   }
 }

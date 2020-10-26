@@ -25,7 +25,7 @@ namespace LIS {
     string SerialStopBit { get; set; }
     string SerialFlowControl { get; set; }
 
-    public SerialLis(SerialFields serialFields) {
+    public SerialLis(CommunicationFields serialFields) {
       BaudRate = serialFields.BaudRate; 
       SerialPort = serialFields.Port; 
       SerialParity = serialFields.Parity;

@@ -14,45 +14,33 @@ namespace LISFramework.ViewModel {
   public class LisSettingVM : ViewModelBase {
 
 
-    private TcpFields _tcpFields;
-    private SerialFields _serialFields;
+    
+    private CommunicationFields _commFields;
     
 
     public LisSettingVM() {
-      _tcpFields = new TcpFields();
-      _serialFields = new SerialFields();
+      _commFields = new CommunicationFields();
       ConnectionTypeIEnumerable = Enum.GetNames(typeof(SendReciver.ConnectionType));
       TcpConnModeIEnumerable = Enum.GetNames(typeof(SendReciver.TcpConnectionMode));
     }
 
-    public TcpFields TcpF {
+    public CommunicationFields CommFields {
       get {
-        return _tcpFields;
+        return _commFields;
       }
       set {
-        _tcpFields = value;
-        NotifyPropertyChanged("TcpF");
-
-      }
-    }
-
-    public SerialFields SerialF {
-      get {
-        return _serialFields;
-      }
-      set {
-        _serialFields = value;
-        NotifyPropertyChanged("SerialF");
+        _commFields = value;
+        NotifyPropertyChanged("CommFields");
 
       }
     }
 
     public List<string> BaudRateList {
       get {
-        return _serialFields.BaudRateList;
+        return _commFields.BaudRateList;
       }
       set {
-        _serialFields.BaudRateList = value;
+        _commFields.BaudRateList = value;
         NotifyPropertyChanged("BaudRateList");
       }
     }
@@ -61,39 +49,39 @@ namespace LISFramework.ViewModel {
 
     public List<string> DataBitList {
       get {
-        return _serialFields.DataBitList;
+        return _commFields.DataBitList;
       }
       set {
-        _serialFields.DataBitList = value;
+        _commFields.DataBitList = value;
         NotifyPropertyChanged("DataBitList");
       }
     }
 
     public List<string> FlowControlList {
       get {
-        return _serialFields.FlowControlList;
+        return _commFields.FlowControlList;
       }
       set {
-        _serialFields.FlowControlList = value;
+        _commFields.FlowControlList = value;
         NotifyPropertyChanged("FlowControlList");
       }
     }
 
     public List<string> ParityList {
       get {
-        return _serialFields.ParityList;
+        return _commFields.ParityList;
       }
       set {
-        _serialFields.ParityList = value;
+        _commFields.ParityList = value;
         NotifyPropertyChanged("ParityList");
       }
     }
     public List<string> StopBitList {
       get {
-        return _serialFields.StopBitList;
+        return _commFields.StopBitList;
       }
       set {
-        _serialFields.StopBitList = value;
+        _commFields.StopBitList = value;
         NotifyPropertyChanged("StopBitList");
       }
     }
@@ -108,19 +96,6 @@ namespace LISFramework.ViewModel {
         NotifyPropertyChanged("ConnectionType");
       }
     }
-
-    private string _tcpConnMode;
-    public string TcpConnMode {
-      get {
-        return _tcpConnMode;
-      }
-      set {
-        _tcpConnMode = value;
-        NotifyPropertyChanged("TcpConnMode");
-      }
-    }
-
-
 
     public IEnumerable<string> ConnectionTypeIEnumerable { get; set; }
 
@@ -140,12 +115,7 @@ namespace LISFramework.ViewModel {
 
     private void SaveCommand_Execute() {
       JsonWR jsonWR = new JsonWR();
-      if (_connType == SendReciver.ConnectionType.Serial.ToString()) {
-        jsonWR.WriteSerialJsonFile(_serialFields);
-      } else if (_connType == SendReciver.ConnectionType.Tcp.ToString()) {
-        jsonWR.WriteTcpJsonFile(_tcpFields);
-      }
-      ///Save In Db Or SomeWhere Else
+      jsonWR.WriteSerialJsonFile(_commFields);
     }
 
 

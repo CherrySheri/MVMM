@@ -36,9 +36,9 @@ namespace LIS {
 
     public string RemoteIp { get; private set; }
 
-    public TcpServerLis(TcpFields tcpFields) {
-      IpAddress = tcpFields.IpAddress;
-      Port = tcpFields.Port;
+    public TcpServerLis(CommunicationFields commFields) {
+      IpAddress = commFields.TcpIpAddress;
+      Port = commFields.TcpPort;
     }
 
     public bool IsConnected {
