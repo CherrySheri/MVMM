@@ -1,0 +1,100 @@
+﻿<Window x:Class="LISFramework.LisSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LISFramework"
+        xmlns:xceed="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        xmlns:VM ="clr-namespace:LISFramework.ViewModel"
+        Title="LisSettings" Height="450" Width="450">
+  <Window.Resources>
+    <VM:LisSettingVM x:Key="LisSettingVm"/>
+  </Window.Resources>
+  <Grid DataContext="{Binding Source={StaticResource ResourceKey=LisSettingVm}}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="80"/>
+      <RowDefinition Height="auto"/>
+    </Grid.RowDefinitions>
+    <StackPanel Orientation="Horizontal" Grid.Row="0">
+      <StackPanel>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" Text="ConnectionType"/>
+        <ComboBox x:Name="cmbConnType" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" Width="150"
+                  ItemsSource="{Binding ConnectionTypeIEnumerable}" SelectedItem="{Binding ConnectionType}" IsSynchronizedWithCurrentItem="True"/>
+      </StackPanel>
+      <Button x:Name="btnSave" Width="100" Height="40" Content="Save" FontWeight="Bold" Command="{Binding SaveCommand}"/>
+    </StackPanel>
+    <StackPanel Orientation="Vertical" Grid.Row="1">
+      <StackPanel Orientation="Vertical" x:Name="spSerial">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=cmbConnType, Path=SelectedItem}" Value="Serial">
+                <Setter Property="Visibility" Value="Visible"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <StackPanel Orientation="Horizontal">
+          <StackPanel Margin="5,10,0,0">
+            <TextBlock x:Name="lblPort" Text="Port :" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"/>
+            <xceed:IntegerUpDown x:Name="tbxPort" Minimum="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Text="{Binding SerialF.Port}"/>
+          </StackPanel>
+          <StackPanel Margin="5,10,0,0">
+            <TextBlock x:Name="lblBaudRate" Text="Baud Rate :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ComboBox x:Name="cbBaudRate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
+                      ItemsSource="{Binding BaudRateList}" SelectedItem="{Binding SerialF.BaudRate}" IsSynchronizedWithCurrentItem="True"/>
+          </StackPanel>
+          <StackPanel Margin="5,10,0,0">
+            <TextBlock x:Name="lblParity" Text="Parity :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ComboBox x:Name="cbParity" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65"
+                      ItemsSource="{Binding ParityList}" SelectedItem="{Binding SerialF.Parity}" IsSynchronizedWithCurrentItem="True"/>
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <StackPanel Margin="5,10,0,0">
+            <TextBlock x:Name="lblDataBit" Text="Data Bit :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ComboBox x:Name="cbDataBit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
+                      ItemsSource="{Binding DataBitList}" SelectedItem="{Binding SerialF.DataBit}" IsSynchronizedWithCurrentItem="True"/>
+          </StackPanel>
+          <StackPanel Margin="5,10,0,0">
+            <TextBlock x:Name="lblStopBit" Text="Stop Bit :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ComboBox x:Name="cbStopBit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" 
+                      ItemsSource="{Binding StopBitList}" SelectedItem="{Binding SerialF.StopBit}" IsSynchronizedWithCurrentItem="True"/>
+          </StackPanel>
+          <StackPanel Margin="5,10,0,0">
+            <TextBlock x:Name="lblFlowCtrl" Text="Flow Control :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ComboBox x:Name="cbFlowCtrl" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
+                      ItemsSource="{Binding FlowControlList}" SelectedItem="{Binding SerialF.FlowControl}" IsSynchronizedWithCurrentItem="True"/>
+          </StackPanel>
+        </StackPanel>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" x:Name="spTcp">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=cmbConnType, Path=SelectedItem}" Value="Tcp">
+                <Setter Property="Visibility" Value="Visible"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <StackPanel Margin="5,10,0,0">
+          <TextBlock x:Name="lblHost" Text="Host :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+          <TextBox x:Name="tbHost" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="131"/>
+        </StackPanel>
+        <StackPanel Margin="5,10,0,0">
+          <TextBlock x:Name="lblTcpPort" Text="Port :" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+          <TextBox x:Name="tbPort" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="81"/>
+        </StackPanel>
+        <StackPanel Margin="5,10,0,0">
+          <TextBlock x:Name="lblType" Text="Type :(Client/Serer)" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+          <ComboBox x:Name="cbTcpType" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"
+                    ItemsSource="{Binding TcpConnModeIEnumerable}" SelectedItem="{Binding TcpConnMode}" IsSynchronizedWithCurrentItem="True"/>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </Grid>
+</Window>

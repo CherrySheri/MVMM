@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="LISFramework.LisComm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LISFramework"
+             xmlns:VM="clr-namespace:LISFramework.ViewModel"
+             xmlns:xceed="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1500" Background="White">
+  <UserControl.Resources>
+
+    <VM:LisCommVM x:Key="lisCommVM"/>
+
+  </UserControl.Resources>
+  <Grid DataContext="{Binding Source={StaticResource ResourceKey=lisCommVM}}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="130"/>
+      <RowDefinition Height="250*"/>
+    </Grid.RowDefinitions>
+    <StackPanel Orientation="Vertical" Grid.Row="0">
+      <StackPanel Orientation="Horizontal">
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lbPatId" Content="Patient ID"/>
+          <TextBox x:Name="txtPatId" Width="150"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lblFName" Content="First Name" />
+          <TextBox x:Name="txtFName" Width="150"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lblLName" Content="Last Name"/>
+          <TextBox x:Name="txtLName" Width="150"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lblSampleId" Content="SampleId" />
+          <TextBox x:Name="txtSampleId"  Width="150"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lblMethodId" Content="MethodId" />
+          <TextBox x:Name="txtMethodId" Width="150"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lblBgnResultDate" Content="Begin Result Date" />
+          <DatePicker x:Name="dateBgnResult" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+          <xceed:DateTimePicker x:Name="timeBgnResult" HorizontalAlignment="Left" VerticalAlignment="Top" Width="101" Margin="0,2"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <Label x:Name="lblEndResultDate" Content="End Result Date" />
+          <DatePicker x:Name="dateEndResult" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+          <xceed:DateTimePicker x:Name="timeEndResult" HorizontalAlignment="Left" VerticalAlignment="Top" Width="101" Margin="0,2"/>
+        </StackPanel>
+        <Button x:Name="btnRequest" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Request" Margin="5" Command="{Binding SendOrder}" />
+      </StackPanel>
+
+    </StackPanel>
+    <StackPanel Grid.Row="2">
+      <TabControl x:Name="tbControlLog"  TabStripPlacement="Top" Grid.Row="0">
+        <TabItem x:Name="tbSys">
+          <TabItem.Header>
+            <TextBlock Text="Tcp System" TextWrapping="Wrap" FontSize="16" Width="84"/>
+          </TabItem.Header>
+          <StackPanel Orientation="Vertical">
+            <ListBox x:Name="lbTcpSys" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150"/>
+            <ListBox x:Name="lbTcpComm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150"/>
+          </StackPanel>
+        </TabItem>
+        <TabItem x:Name="tbSerialSys">
+          <TabItem.Header>
+            <TextBlock Text="Serial System " FontSize="16" TextWrapping="Wrap" Width="100"/>
+          </TabItem.Header>
+          <StackPanel>
+            <ListBox x:Name="lbSerialSys" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="10" Height="150"/>
+            <ListBox x:Name="lbSerialComm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150"/>
+          </StackPanel>
+        </TabItem>
+        <TabItem x:Name="tabLog" Margin="0,0,-3,0">
+          <TabItem.Header>
+            <TextBlock Text="Log " TextWrapping="Wrap" FontSize="16"/>
+          </TabItem.Header>
+          <ListBox x:Name="lbLog" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="300"/>
+        </TabItem>
+      </TabControl>
+    </StackPanel>
+  </Grid>
+</UserControl>
