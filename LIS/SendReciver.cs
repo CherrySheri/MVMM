@@ -16,7 +16,7 @@ namespace LIS {
 
 
     public int FrmeRetryInSeconds { get; set; } = 12;
-    private int _FrameSendIntervalInSeconds { get; set; } = 1;
+    private int _FrameSendIntervalInSeconds { get; set; } = 12;
     private string _SenderMsg { get; set; }
     private string _ReceivedMsg { get; set; }
     private ConnectionType _ConnectionType = ConnectionType.Serial;
@@ -59,14 +59,13 @@ namespace LIS {
 
     #region DispatcherTimer Initialization
     private void StartDispatcherTimer() {
-      //Timer = new System.Threading.Timer(new TimerCallback(SendMessageAfterParticularDelay),
-      //  null, TimeSpan.FromSeconds(_FrameSendIntervalInSeconds),
-      //  TimeSpan.FromSeconds(_FrameSendIntervalInSeconds));
+      Timer = new System.Threading.Timer(new TimerCallback(SendMessageAfterParticularDelay),
+        null, TimeSpan.FromSeconds(FrmeRetryInSeconds), TimeSpan.FromSeconds(FrmeRetryInSeconds));
     }
 
 
     private void SendMessageAfterParticularDelay(object state) {
-      if (!_isConnectedToMachine) return;
+      if (!_isConnectedToMachine || _SenderMsg == null) return;
       if (_ConnectionType == ConnectionType.Serial) {
         _SerialLis.SendMessage(_SenderMsg);
       } else if (_ConnectionType == ConnectionType.Tcp) {
@@ -82,16 +81,18 @@ namespace LIS {
 
     #region BackgroundWorker Initialization
     private void StartBackgroundWorker() {
-      _ReceivedBgWorker = new BackgroundWorker();
-      _ReceivedBgWorker.DoWork += ReceivedBgWorker_DoWork;
-      _ReceivedBgWorker.RunWorkerCompleted += ReceivedBgWorker_RunWorkerCompleted;
-      if (!_ReceivedBgWorker.IsBusy) {
-        _ReceivedBgWorker.RunWorkerAsync();
+      if (_ReceivedBgWorker == null) {
+        _ReceivedBgWorker = new BackgroundWorker();
+        _ReceivedBgWorker.DoWork += ReceivedBgWorker_DoWork;
+        _ReceivedBgWorker.RunWorkerCompleted += ReceivedBgWorker_RunWorkerCompleted;
+        if (!_ReceivedBgWorker.IsBusy) {
+          _ReceivedBgWorker.RunWorkerAsync();
+        }
       }
     }
 
     private void ReceivedBgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-      throw new Exception("Run Worker Completed");
+      //throw new Exception("Run Worker Completed");
     }
 
     private void ReceivedBgWorker_DoWork(object sender, DoWorkEventArgs e) {
@@ -99,22 +100,23 @@ namespace LIS {
         if (!_isConnectedToMachine) continue;
         if (string.IsNullOrEmpty(_ReceivedMsg)) continue;
         if (_ReceivedMsg.Contains(ENQ)) {
-          _SenderMsg = ACK; //_SendDispatcherTimer.Start();
-          SendMeesageToMachine();
+          _SenderMsg = ACK;
         } else if (_ReceivedMsg.Contains(STX)) {
           if (_ReceivedMsg.Contains(CR) || _ReceivedMsg.Contains(LF)) {
-            _SenderMsg = ACK; SendMeesageToMachine(); //_SendDispatcherTimer.Start();
+            _SenderMsg = ACK;
           } else if (_ReceivedMsg.Contains(GS)) {
-            _SenderMsg = ACK; SendMeesageToMachine();//_SendDispatcherTimer.Start();
+            _SenderMsg = ACK;
           } else if (_ReceivedMsg.Contains(ETX) || _ReceivedMsg.Contains(ETB)) {
-            _SenderMsg = ACK; SendMeesageToMachine();//_SendDispatcherTimer.Start();
+            _SenderMsg = ACK;
           } else if (_ReceivedMsg.Contains("<!--:End:Chksum:1:")) {
-            _SenderMsg = ACK; SendMeesageToMachine();//_SendDispatcherTimer.Start();
-          } else if (_ReceivedMsg.Contains(EOT)) {
-            Timer.Change(Timeout.Infinite, Timeout.Infinite);
-            break;
+            _SenderMsg = ACK;
           }
+        } else if (_ReceivedMsg.Contains(EOT)) {
+          Timer.Change(Timeout.Infinite, Timeout.Infinite);
+          _SenderMsg = null;
+          break;
         }
+        Thread.Sleep(TimeSpan.FromSeconds(_FrameSendIntervalInSeconds));
       }
     }
 
@@ -181,14 +183,6 @@ namespace LIS {
       lock (serialMsgStatusColl._statusLock) {
         serialMsgStatusColl.StatusCollection.Add(status);
       }
-
-      
-      //Task.Run(() =>
-      //  capturedSynchronizationContext.Post(state => serialMsgStatusColl.StatusCollection.Add(status), null)
-      //);
-
-      //serialMsgStatusColl.StatusCollection.Add(ConvertCtrlCharToStr(status));
-
     }
 
     #endregion Serial Msg And Status
@@ -206,9 +200,9 @@ namespace LIS {
     }
 
     public void SendOrderToMachine() {
-      int ri = 0;
+      int ri = 0; StartBackgroundWorker();
       List<string> recordArray = GetOrderFromSpectrum();
-      _SenderMsg = ENQ; 
+      _SenderMsg = ENQ;
       while (ri < recordArray.Count) {
         if (!_isConnectedToMachine) continue;
         if (_ReceivedMsg == ACK) {
@@ -216,11 +210,17 @@ namespace LIS {
           _ReceivedMsg = "";
           ri++;
         } else if (_ReceivedMsg == NAK) {
+          _SenderMsg = null;
+          Timer.Change(Timeout.Infinite, Timeout.Infinite);
           break;
         }
-        Thread.Sleep(TimeSpan.FromSeconds(_FrameSendIntervalInSeconds));
+        Thread.Sleep(TimeSpan.FromSeconds(12));
       }
-      Timer.Change(Timeout.Infinite, Timeout.Infinite);
+      //_ReceivedMsg.Contains(ACK)
+      if (_SenderMsg.Contains("L")) {
+        _SenderMsg = null;
+        Timer.Change(Timeout.Infinite, Timeout.Infinite);
+      }
     }
 
     private List<string> GetOrderFromSpectrum() {
