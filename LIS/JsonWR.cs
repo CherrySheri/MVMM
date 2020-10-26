@@ -35,8 +35,12 @@ namespace LIS {
     }
 
     public CommunicationFields ReadJsonFile() {
-      CommunicationFields serialF = JsonConvert.DeserializeObject<CommunicationFields>(File.ReadAllText(GetCommJsonFile));
+      CommunicationFields serialF = null;
+      if (File.Exists(GetCommJsonFile)) {
+        serialF = JsonConvert.DeserializeObject<CommunicationFields>(File.ReadAllText(GetCommJsonFile));
+      }
       return serialF;
+
     }
   }
 }

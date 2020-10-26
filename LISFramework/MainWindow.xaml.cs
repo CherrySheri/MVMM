@@ -23,7 +23,7 @@ namespace LISFramework {
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e) {
-
+        
     }
 
     private void TabCtrl_SelectionChanged(object sender, SelectionChangedEventArgs e) {

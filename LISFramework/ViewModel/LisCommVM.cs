@@ -9,7 +9,16 @@ using System.Windows.Input;
 namespace LISFramework.ViewModel {
   public class LisCommVM : ViewModelBase {
 
+
+    public LisCommVM() {
+      JsonWR jsonR = new JsonWR();
+      commFields = jsonR.ReadJsonFile();
+      sendR = new SendReciver(commFields);
+    }
+
     ICommand _SendOrder;
+    SendReciver sendR { get; set; }
+    CommunicationFields commFields { get; set; }
 
     public ICommand SendOrder {
       get {
@@ -22,9 +31,6 @@ namespace LISFramework.ViewModel {
 
     private void SendOrder_Execute() {
       //Load Serial Json File
-      JsonWR jsonR = new JsonWR();
-      CommunicationFields serialF = jsonR.ReadJsonFile();
-      SendReciver sendR = new SendReciver(SendReciver.ConnectionType.Serial, serialF);
       sendR.SendOrderToMachine();
     }
 

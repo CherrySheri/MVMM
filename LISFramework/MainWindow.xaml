@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LISFramework"
         xmlns:VM="clr-namespace:LISFramework.ViewModel"
-        mc:Ignorable="d" 
+        mc:Ignorable="d" Loaded="Window_Loaded"
         Title="MainWindow" Height="700" Width="1500" WindowState="Maximized">
+  
   <Window.Resources>
     <VM:MainWindowViewModel x:Key="mainwindowViewVM"/>
   </Window.Resources>

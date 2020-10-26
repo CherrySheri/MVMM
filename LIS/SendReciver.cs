@@ -33,13 +33,17 @@ namespace LIS {
     private bool _isConnectedToMachine { get; set; } 
 
 
-    public SendReciver(ConnectionType connType, CommunicationFields commFields) {
-      _ConnectionType = connType;
-      _TcpConnMode = CommFields.TcpMode;
-      CommFields = commFields;
-      StartConnection();
-      StartDispatcherTimer();
-      StartBackgroundWorker();
+    public SendReciver(CommunicationFields commFields) {
+      if (commFields != null) {
+        _ConnectionType = commFields.ConnType;
+        if (_ConnectionType == ConnectionType.Tcp) {
+          _TcpConnMode = CommFields.TcpMode;
+        }
+        CommFields = commFields;
+        StartConnection();
+        StartDispatcherTimer();
+        StartBackgroundWorker();
+      }
     }
 
     #region DispatcherTimer Initialization
