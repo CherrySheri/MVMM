@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LISFramework", "LISFramework\LISFramework.csproj", "{0D13EA12-AFD9-4C0C-8378-37D7EAE9C713}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIS", "LIS\LIS.csproj", "{3A6B0797-39CE-40A3-A069-61CFBB1392D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D13EA12-AFD9-4C0C-8378-37D7EAE9C713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D13EA12-AFD9-4C0C-8378-37D7EAE9C713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D13EA12-AFD9-4C0C-8378-37D7EAE9C713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D13EA12-AFD9-4C0C-8378-37D7EAE9C713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A6B0797-39CE-40A3-A069-61CFBB1392D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A6B0797-39CE-40A3-A069-61CFBB1392D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A6B0797-39CE-40A3-A069-61CFBB1392D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A6B0797-39CE-40A3-A069-61CFBB1392D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A6440E18-49EF-4B86-974E-5B1DB6793625}
+	EndGlobalSection
+EndGlobal
