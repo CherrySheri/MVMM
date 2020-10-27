@@ -45,6 +45,8 @@ namespace LIS {
       }
     }
 
+    private LisPatientFields _lisPatFields { get; set; }
+
 
 
     #endregion Private Fields
@@ -52,7 +54,8 @@ namespace LIS {
 
     #region Constructor
     
-    public SendReciver(CommunicationFields commFields, SerialMessageStatus serialMsgStatus, TcpMesageStatus messageStatus) {
+    public SendReciver(CommunicationFields commFields, SerialMessageStatus serialMsgStatus, 
+                       TcpMesageStatus messageStatus, LisPatientFields lisPatF) {
       if (commFields != null) {
         _connType = commFields.ConnType;
         if (_connType == ConnectionType.Tcp) {
@@ -61,6 +64,7 @@ namespace LIS {
         _communicationFields = commFields;
         this._serialMsgStatus = serialMsgStatus;
         this._tcpMsgStatus   = messageStatus;
+        _lisPatFields = lisPatF;
       }
     }
     #endregion Constructor
@@ -290,16 +294,30 @@ namespace LIS {
     }
 
     private List<string> GetOrderFromSpectrum() {
-      SpectrumAnalyzer spectrum = new SpectrumAnalyzer();
-      List<string> orderList = spectrum.GetOrders();
+      SpectrumAnalyzer spectrum = new SpectrumAnalyzer(_lisPatFields);
+      List<string> orderList = new List<string>();
+      if (_lisPatFields.OrderType.ToLower() == "o") {
+        orderList = spectrum.GetOrderRecord();
+      } else if (_lisPatFields.OrderType.ToLower() == "q") {
+        orderList = spectrum.GetRequestAnalysis();
+      }
+      int recordLevel = 1;
       for (int oi = 0; oi < orderList.Count; oi++) {
-        string order = STX + orderList[oi] + CR + ETX + CR + LF;
+        if (recordLevel == 0) { recordLevel = 1; }
+        string order = STX + recordLevel + orderList[oi] + CR + ETX + CR + LF;
         string checksum = spectrum.CalculateChcksum(order);
-        order = STX + orderList[oi] + CR + ETX + checksum + CR + LF;
-        orderList[oi] = order;
+        order = STX + recordLevel + orderList[oi] + CR + ETX + checksum + CR + LF;
+        orderList[oi] = order; recordLevel++;
+        if (recordLevel == 8) {
+          recordLevel = 0;
+        }
       }
       return orderList;
     }
+
+    
+
+
 
     #endregion SendOrder To Machine
 
@@ -428,4 +446,33 @@ namespace LIS {
     public ObservableCollection<string> StatusCollection { get; set; }
   }
 
+
+  public class LisPatientFields {
+
+    public string PatientId { get; set; }
+
+    public string PatFName { get; set; }
+
+    public string PatMName { get; set; }
+
+    public string PatLName { get; set; }
+
+    public string DOB { get; set; }
+
+    public string Gender { get; set; }
+
+    public string SampleId { get; set; }
+
+    public string MethoId { get; set; }
+
+    public string TestName { get; set; }
+
+    public string BgnTestDateTime { get; set; }
+
+    public string EndTestDateTime { get; set; }
+
+    public string OrderType { get; set; }
+
+
+  }
 }

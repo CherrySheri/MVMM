@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,6 +64,12 @@ namespace LIS {
       }
     }
 
+    protected string AppendOperator {
+      get {
+        return "^";
+      }
+    }
+
 
     public abstract string CreateHeaderRecord();
     public abstract string CreatePatientRecord();
@@ -74,18 +81,17 @@ namespace LIS {
     public abstract string CalculateChcksum(string frame);
 
 
-    public string PatFName {get;set;}
-    public string PatMName { get; set; }
-    public string PatLName { get; set; }
-    public string DOB { get; set; }
-    public string Gender { get; set; }
-    public string TestName { get; set; }
-    public string BgnTestDateTime { get; set; }
-    public string EndTestDateTime { get; set; }
+   
 
   }
 
   public class SpectrumAnalyzer : ASTM {
+
+    LisPatientFields _lisPatFields { get; set; }
+
+    public SpectrumAnalyzer(LisPatientFields lisPatFields) {
+      _lisPatFields = lisPatFields;
+    }
 
     public override string CalculateChcksum(string frame) {
       string checkSum = "00";
@@ -123,20 +129,37 @@ namespace LIS {
     }
 
     public override string CreateHeaderRecord() {
-      string header = "1" + HeaderR + Sepreator + Delimeter + Sepreator;
+      string header = HeaderR + Sepreator + Delimeter + Sepreator;
       return header;
     }
 
     public override string CreateOrderRecord() {
-      return "";
+      string testName = _lisPatFields.TestName;
+      string order = OrederR + "1" + Sepreator + "12345" + Sepreator + Sepreator +
+                    AppendOperator + AppendOperator + AppendOperator + testName + Sepreator + Sepreator + Sepreator
+                    + DateTime.Now.ToString("yyyyMMdd") + Sepreator + Sepreator + Sepreator + Sepreator + "A" +
+                    Sepreator + Sepreator + Sepreator + Sepreator + "Raro Color" +
+                    Sepreator + Sepreator + Sepreator + Sepreator + Sepreator + Sepreator + Sepreator + Sepreator +
+                    Sepreator + Sepreator + "Q";
+
+      return order;
     }
 
     public override string CreatePatientRecord() {
-      return "";
+      string patId = (_lisPatFields.PatientId == null || _lisPatFields.PatientId == "") ? Sepreator : _lisPatFields.PatientId;
+      string patientName = _lisPatFields.PatFName + " " + _lisPatFields.PatMName + " " + _lisPatFields.PatLName;
+      string patDob = (_lisPatFields.DOB == null || _lisPatFields.DOB == "") ? Sepreator : _lisPatFields.DOB;
+      string patGender = (_lisPatFields.Gender == null || _lisPatFields.Gender == "") ? Sepreator : _lisPatFields.Gender;
+      string patInfo = PatientR + "1" + Sepreator + patId + Sepreator + Sepreator + Sepreator
+                     + patientName + Sepreator + Sepreator + patDob + Sepreator + patGender
+                     + Sepreator + Sepreator + Sepreator + Sepreator + "Cureta" + Sepreator
+                     + Sepreator + Sepreator + Sepreator + Sepreator + "Nada" +
+                      Sepreator + Sepreator + Sepreator + Sepreator + Sepreator + Sepreator + Sepreator + " Piso 3^Cama 1";
+      return patInfo;
     }
 
     public override string CreateRequestRecord() {
-      string reqInfo = "2" + RequestR + Sepreator + "1" + Sepreator + "ALL" + Sepreator + Sepreator
+      string reqInfo = RequestR + Sepreator + "1" + Sepreator + "ALL" + Sepreator + Sepreator
                       + "ALL" + Sepreator + Sepreator + DateTime.Now.ToString("yyyyMMdd") 
                       + "000000" 
                       + Sepreator + DateTime.Now.ToString("yyyyMMdd") + "000000";
@@ -148,22 +171,38 @@ namespace LIS {
     }
 
     public override string CreateTerminatorRecord() {
-      string terminator = "3" + TerminatorR +Sepreator + "1" + Sepreator + "c";
+      string terminator = TerminatorR +Sepreator + "1" + Sepreator + "c";
       return terminator;
     }
 
 
-    public List<string> GetOrders() {
+    public List<string> GetRequestAnalysis() {
       string header = CreateHeaderRecord();
       string request = CreateRequestRecord();
       string terminator = CreateTerminatorRecord();
 
-      List<string> orderList = new List<string>();
-      orderList.Add(header);
-      orderList.Add(request);
-      orderList.Add(terminator);
+      List<string> orderList = new List<string> {
+        header,
+        request,
+        terminator
+      };
       return orderList;
     }
+
+    public List<string> GetOrderRecord() {
+      string header = CreateHeaderRecord();
+      string patient = CreatePatientRecord();
+      string order = CreateOrderRecord();
+      string terminator = CreateTerminatorRecord();
+
+      List<string> orderList = new List<string>() {
+        header, patient, order, terminator
+      };
+
+      return orderList;
+    }
+
+
 
 
   }

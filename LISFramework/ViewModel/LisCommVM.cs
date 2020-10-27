@@ -16,8 +16,9 @@ namespace LISFramework.ViewModel {
     public LisCommVM() {
       JsonWR jsonR = new JsonWR();
       commFields = jsonR.ReadJsonFile();
+      _lisPatFields = new LisPatientFields();
       serialMsgStatus = new SerialMessageStatus(); tcpMsgStatus = new TcpMesageStatus();
-      sendR = new SendReciver(commFields, serialMsgStatus, tcpMsgStatus);
+      sendR = new SendReciver(commFields, serialMsgStatus, tcpMsgStatus, _lisPatFields);
       sendR.InitializeConnection();
     }
 
@@ -28,6 +29,7 @@ namespace LISFramework.ViewModel {
     CommunicationFields commFields { get; set; }
     SerialMessageStatus serialMsgStatus { get; set; }
     TcpMesageStatus tcpMsgStatus { get; set; }
+    LisPatientFields _lisPatFields { get; set; }
 
     #endregion Private Variables
 
@@ -65,6 +67,17 @@ namespace LISFramework.ViewModel {
 
     #endregion Serial Msg and Status Collection
 
+    public LisPatientFields LisPatFields {
+      get {
+        return _lisPatFields;
+      }
+      set {
+        _lisPatFields = value;
+        NotifyPropertyChanged("LisPatFields");
+      }
+    }
+
+
 
     #region Tcp Msg and Status Collection
 
@@ -79,13 +92,13 @@ namespace LISFramework.ViewModel {
     }
 
 
-    public ObservableCollection<string> TcpStatusCollection {
+    public ObservableCollection<string> TcpStatusColl {
       get {
         return tcpMsgStatus.StatusCollection;
       }
       set {
         tcpMsgStatus.StatusCollection = value;
-        NotifyPropertyChanged("StatusList");
+        NotifyPropertyChanged("TcpStatusColl");
       }
     }
 
@@ -96,4 +109,8 @@ namespace LISFramework.ViewModel {
       sendR.SendOrderToMachine();
     }
   }
+
+  
+
+
 }
