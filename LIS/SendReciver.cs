@@ -117,7 +117,7 @@ namespace LIS {
     }
 
     private void ReceivedBgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-      //throw new Exception("Run Worker Completed");
+      
     }
 
     private void ReceivedBgWorker_DoWork(object sender, DoWorkEventArgs e) {
@@ -137,9 +137,7 @@ namespace LIS {
             _sendMsg = ACK; _receiveMsg = null;
           }
         } else if (_receiveMsg.Contains(EOT)) {
-          //_threadTimer.Change(Timeout.Infinite, Timeout.Infinite);
           _sendMsg = null; _receiveMsg = null;
-          //break;
         }
         Thread.Sleep(TimeSpan.FromSeconds(_frameSendInSeconds));
       }

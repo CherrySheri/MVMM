@@ -12,61 +12,65 @@
   </UserControl.Resources>
   <Grid DataContext="{Binding Source={StaticResource ResourceKey=lisCommVM}}">
     <Grid.RowDefinitions>
-      <RowDefinition Height="130"/>
-      <RowDefinition Height="250*"/>
+      <RowDefinition Height="200"/>
+      <RowDefinition Height="500"/>
     </Grid.RowDefinitions>
     <StackPanel Orientation="Vertical" Grid.Row="0">
-      <StackPanel Orientation="Horizontal">
+      <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
         <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lbPatId" Content="Patient ID"/>
-          <TextBox x:Name="txtPatId" Width="150"/>
+          <TextBlock x:Name="lbPatId" Text="Patient ID" HorizontalAlignment="Left" Margin="5,5,0,0"/>
+          <TextBox x:Name="txtPatId" Width="150" Height="35" Margin="5,5,0,0"/>
         </StackPanel>
         <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lblFName" Content="First Name" />
-          <TextBox x:Name="txtFName" Width="150"/>
+          <TextBlock x:Name="lblFName" Text="First Name" HorizontalAlignment="Left" Margin="5,5,0,0"/>
+          <TextBox x:Name="txtFName" Width="150" Height="35" Margin="5,5,0,0"/>
         </StackPanel>
         <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lblLName" Content="Last Name"/>
-          <TextBox x:Name="txtLName" Width="150"/>
+          <TextBlock x:Name="lblLName" Text="Last Name" HorizontalAlignment="Left" Margin="5,5,0,0"/>
+          <TextBox x:Name="txtLName" Width="150" Height="35" Margin="5,5,0,0"/>
         </StackPanel>
-        <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lblSampleId" Content="SampleId" />
-          <TextBox x:Name="txtSampleId"  Width="150"/>
-        </StackPanel>
-        <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lblMethodId" Content="MethodId" />
-          <TextBox x:Name="txtMethodId" Width="150"/>
-        </StackPanel>
-        <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lblBgnResultDate" Content="Begin Result Date" />
-          <DatePicker x:Name="dateBgnResult" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-          <xceed:DateTimePicker x:Name="timeBgnResult" HorizontalAlignment="Left" VerticalAlignment="Top" Width="101" Margin="0,2"/>
-        </StackPanel>
-        <StackPanel Margin="5,0,0,0">
-          <Label x:Name="lblEndResultDate" Content="End Result Date" />
-          <DatePicker x:Name="dateEndResult" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-          <xceed:DateTimePicker x:Name="timeEndResult" HorizontalAlignment="Left" VerticalAlignment="Top" Width="101" Margin="0,2"/>
-        </StackPanel>
-        <Button x:Name="btnRequest" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Request" Margin="5" Command="{Binding SendOrder}" />
       </StackPanel>
-
+      <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+        <StackPanel Margin="5,0,0,0">
+          <TextBlock x:Name="lblSampleId" Text="Sample ID" HorizontalAlignment="Left" Margin="5,5,0,0" />
+          <TextBox x:Name="txtSampleId"  Width="150" Height="35" Margin="5,5,0,0"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <TextBlock x:Name="lblMethodId" Text="Method ID" HorizontalAlignment="Left" Margin="5,5,0,0"/>
+          <TextBox x:Name="txtMethodId" Width="150" Height="35" Margin="5,5,0,0"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <TextBlock x:Name="lbTestName" Text="Test Name" HorizontalAlignment="Left" Margin="5,5,0,0"/>
+          <TextBox x:Name="txtTestName" Width="150" Height="35" Margin="5,5,0,0"/>
+        </StackPanel>
+        <StackPanel Margin="5,0,0,0">
+          <TextBlock x:Name="lblBgnResultDate" Text="Begin Result Date" HorizontalAlignment="Left" Margin="5,5,0,0" />
+          <DatePicker x:Name="dateBgnResult" HorizontalContentAlignment="Center" FontSize="14" VerticalAlignment="Top" Width="120" Height="35" Margin="5,5,0,0"/>
+        </StackPanel>
+        <StackPanel Margin="10,0,0,0">
+          <TextBlock x:Name="lblEndResultDate" Text="End Result Date" HorizontalAlignment="Left" Margin="5,5,0,0" />
+          <DatePicker x:Name="dateEndResult" HorizontalContentAlignment="Center" FontSize="14" VerticalAlignment="Top" Width="120" Height="35" Margin="5,5,0,0"/>
+        </StackPanel>
+        <Button x:Name="btnRequest" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                Content="Request" Margin="10,10,0,0" Width="100" Height="35" Command="{Binding SendOrder}" />
+      </StackPanel>
     </StackPanel>
     <StackPanel Grid.Row="2">
       <TabControl x:Name="tbControlLog"  TabStripPlacement="Top">
         <TabItem x:Name="tbSys" Header="Tcp System">
           <StackPanel>
-            <ListBox x:Name="lblTcpStatus" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478"/>
-            <ListBox x:Name="lbTcpComm" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"   Width="1478"/>
+            <ListBox x:Name="lblTcpStatus" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" Margin="5"/>
+            <ListBox x:Name="lbTcpComm" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="1478"/>
           </StackPanel>
         </TabItem>
         <TabItem x:Name="tbSerialSys" Header="Serial System">
           <StackPanel>
-            <ListBox x:Name="lbSerialSys" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" ItemsSource="{Binding SerialStatusCollection}"/>
-            <ListBox x:Name="lbSerialComm" Height="150" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Width="1478" ItemsSource="{Binding SerialMessageList}"/>
+            <ListBox x:Name="lbSerialSys" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" Margin="5" ItemsSource="{Binding SerialStatusCollection}"/>
+            <ListBox x:Name="lbSerialComm" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" Margin="5" ItemsSource="{Binding SerialStatusColl}"/>
           </StackPanel>
         </TabItem>
         <TabItem x:Name="tabLog" Header="Log">
-          <ListBox x:Name="lbLog" HorizontalAlignment="Left" VerticalAlignment="Center" Height="500" Width="1478"/>
+          <ListBox x:Name="lbLog" Height="450" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" Margin="5"/>
         </TabItem>
       </TabControl>
     </StackPanel>

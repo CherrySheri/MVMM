@@ -16,17 +16,20 @@ namespace LISFramework.ViewModel {
     public LisCommVM() {
       JsonWR jsonR = new JsonWR();
       commFields = jsonR.ReadJsonFile();
-      SerialMsg = new SerialMessageStatus(); TcpMessageStatus = new TcpMesageStatus();
-      sendR = new SendReciver(commFields, SerialMsg, TcpMessageStatus);
+      serialMsgStatus = new SerialMessageStatus(); tcpMsgStatus = new TcpMesageStatus();
+      sendR = new SendReciver(commFields, serialMsgStatus, tcpMsgStatus);
       sendR.InitializeConnection();
     }
 
-
+    #region Private Variables
+    
     ICommand _SendOrder;
     SendReciver sendR { get; set; }
     CommunicationFields commFields { get; set; }
-    SerialMessageStatus SerialMsg { get; set; }
-    TcpMesageStatus TcpMessageStatus { get; set; }
+    SerialMessageStatus serialMsgStatus { get; set; }
+    TcpMesageStatus tcpMsgStatus { get; set; }
+
+    #endregion Private Variables
 
     public ICommand SendOrder {
       get {
@@ -37,33 +40,60 @@ namespace LISFramework.ViewModel {
       }
     }
 
-    public ObservableCollection<string> SerialMessageList {
+    #region Serial Msg and Status Collection
+
+    public ObservableCollection<string> SerialMsgColl {
       get {
-        return SerialMsg.MessageCollection;
+        return serialMsgStatus.MessageCollection;
       }
       set {
-        SerialMsg.MessageCollection = value;
-        NotifyPropertyChanged("MessageList");
+        serialMsgStatus.MessageCollection = value;
+        NotifyPropertyChanged("SerialMsgColl");
       }
     }
 
 
-
-    public ObservableCollection<string> SerialStatusCollection {
+    public ObservableCollection<string> SerialStatusColl {
       get {
-        return SerialMsg.StatusCollection;
+        return serialMsgStatus.StatusCollection;
       }
       set {
-        SerialMsg.StatusCollection = value;
+        serialMsgStatus.StatusCollection = value;
+        NotifyPropertyChanged("SerialStatusColl");
+      }
+    }
+
+    #endregion Serial Msg and Status Collection
+
+
+    #region Tcp Msg and Status Collection
+
+    public ObservableCollection<string> TcpMsgColl {
+      get {
+        return tcpMsgStatus.MessageCollection;
+      }
+      set {
+        tcpMsgStatus.MessageCollection = value;
+        NotifyPropertyChanged("TcpMsgColl");
+      }
+    }
+
+
+    public ObservableCollection<string> TcpStatusCollection {
+      get {
+        return tcpMsgStatus.StatusCollection;
+      }
+      set {
+        tcpMsgStatus.StatusCollection = value;
         NotifyPropertyChanged("StatusList");
       }
     }
 
+    #endregion Tcp Msg and Status Collection
+
 
     private void SendOrder_Execute() {
-      //Load Serial Json File
       sendR.SendOrderToMachine();
     }
-
   }
 }
