@@ -3,94 +3,115 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Data;
-using System.Windows.Threading;
+using System.Threading;
+using System.Windows.Navigation;
 
 namespace LIS {
   public class SendReciver {
 
+    #region Private Fields
 
-    public int FrmeRetryInSeconds { get; set; } = 12;
-    private int _FrameSendIntervalInSeconds { get; set; } = 12;
-    private string _SenderMsg { get; set; }
-    private string _ReceivedMsg { get; set; }
-    private ConnectionType _ConnectionType = ConnectionType.Serial;
-    private TcpConnectionMode _TcpConnMode = TcpConnectionMode.C;
+    private int _frameSendInSeconds { get; set; } = 12;
+    private string _sendMsg { get; set; }
+    private string _receiveMsg { get; set; }
 
+    private ConnectionType _connType = ConnectionType.Serial;
 
-    public CommunicationFields CommFields { get; set; }
-    public SerialMessageStatus serialMsgStatusColl { get; set; } 
-    public TcpMesageStatus messageStatusColl { get; set; }
+    private TcpConnectionMode _tcpConnMode = TcpConnectionMode.C;
 
+    private CommunicationFields _communicationFields { get; set; }
 
-    private System.Threading.Timer Timer;
-    BackgroundWorker _ReceivedBgWorker;
-    
+    private SerialMessageStatus _serialMsgStatus { get; set; }
 
-    private TcpServerLis _TcpServerLis { get; set; }
-    private TcpClientLis _TcpClientLis { get; set; }
-    private SerialLis _SerialLis { get; set; }
+    private TcpMesageStatus _tcpMsgStatus { get; set; }
 
-    private bool _isConnectedToMachine { get; set; } 
+    private System.Threading.Timer _threadTimer;
 
+    private BackgroundWorker _receivedBgWorker;
 
-    public SendReciver(CommunicationFields commFields, SerialMessageStatus serialMsgStatus, TcpMesageStatus messageStatus) {
-      if (commFields != null) {
-        _ConnectionType = commFields.ConnType;
-        if (_ConnectionType == ConnectionType.Tcp) {
-          _TcpConnMode = CommFields.TcpMode;
-        }
-        CommFields = commFields;
-        this.serialMsgStatusColl = serialMsgStatus;
-        this.messageStatusColl   = messageStatus;
+    private TcpServerLis _tcpServerLis { get; set; }
+
+    private TcpClientLis _tcpClientLis { get; set; }
+
+    private SerialLis _serialLis { get; set; }
+
+    private bool _isConnectedToMachine { get; set; }
+
+    private string CurrentDateTime {
+      get {
+        return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " ";
       }
     }
 
+
+
+    #endregion Private Fields
+
+
+    #region Constructor
+    
+    public SendReciver(CommunicationFields commFields, SerialMessageStatus serialMsgStatus, TcpMesageStatus messageStatus) {
+      if (commFields != null) {
+        _connType = commFields.ConnType;
+        if (_connType == ConnectionType.Tcp) {
+          _tcpConnMode = _communicationFields.TcpMode;
+        }
+        _communicationFields = commFields;
+        this._serialMsgStatus = serialMsgStatus;
+        this._tcpMsgStatus   = messageStatus;
+      }
+    }
+    #endregion Constructor
+
+
+    #region Init Component
+
+
     public void InitializeConnection() {
-      StartConnection();
+      StartTcpSerialConnection();
       StartDispatcherTimer();
       StartBackgroundWorker();
     }
 
-    #region DispatcherTimer Initialization
+    #region Timer Initialization
+
     private void StartDispatcherTimer() {
-      Timer = new System.Threading.Timer(new TimerCallback(SendMessageAfterParticularDelay),
-        null, TimeSpan.FromSeconds(FrmeRetryInSeconds), TimeSpan.FromSeconds(FrmeRetryInSeconds));
+      _threadTimer = new System.Threading.Timer(new TimerCallback(SendMessageAfterParticularDelay),
+        null, TimeSpan.FromSeconds(_frameSendInSeconds), TimeSpan.FromSeconds(_frameSendInSeconds));
     }
 
 
     private void SendMessageAfterParticularDelay(object state) {
-      if (!_isConnectedToMachine || _SenderMsg == null || string.IsNullOrEmpty(_SenderMsg)) return;
-      SenderMessage(ConvertCtrlCharToStr(_SenderMsg));
-      if (_ConnectionType == ConnectionType.Serial) {
-        _SerialLis.SendMessage(_SenderMsg);
-      } else if (_ConnectionType == ConnectionType.Tcp) {
-        if (_TcpConnMode == TcpConnectionMode.C) {
-          _TcpClientLis.Send(_SenderMsg);
-        } else if (_TcpConnMode == TcpConnectionMode.S) {
-          _TcpServerLis.Send(_SenderMsg);
+      if (!_isConnectedToMachine || string.IsNullOrEmpty(_sendMsg)) return;
+      if (_connType == ConnectionType.Serial) {
+        SendSerialMsg();
+        _serialLis.SendMessage(_sendMsg);
+      } else if (_connType == ConnectionType.Tcp) {
+        SendTcpCSMsg();
+        if (_tcpConnMode == TcpConnectionMode.C) {
+          _tcpClientLis.Send(_sendMsg);
+        } else if (_tcpConnMode == TcpConnectionMode.S) {
+          _tcpServerLis.Send(_sendMsg);
         }
       }
-      if (_SenderMsg == EOT) {
-        _SenderMsg = "";
+      if (_sendMsg == EOT) {
+        _sendMsg = null;
       }
     }
 
-    #endregion DispatcherTimer Initialization
+    #endregion Timer Initialization
+
 
     #region BackgroundWorker Initialization
     private void StartBackgroundWorker() {
-      if (_ReceivedBgWorker == null) {
-        _ReceivedBgWorker = new BackgroundWorker();
-        _ReceivedBgWorker.DoWork += ReceivedBgWorker_DoWork;
-        _ReceivedBgWorker.RunWorkerCompleted += ReceivedBgWorker_RunWorkerCompleted;
-        if (!_ReceivedBgWorker.IsBusy) {
-          _ReceivedBgWorker.RunWorkerAsync();
+      if (_receivedBgWorker == null) {
+        _receivedBgWorker = new BackgroundWorker();
+        _receivedBgWorker.DoWork += ReceivedBgWorker_DoWork;
+        _receivedBgWorker.RunWorkerCompleted += ReceivedBgWorker_RunWorkerCompleted;
+        if (!_receivedBgWorker.IsBusy) {
+          _receivedBgWorker.RunWorkerAsync();
         }
       }
     }
@@ -102,60 +123,76 @@ namespace LIS {
     private void ReceivedBgWorker_DoWork(object sender, DoWorkEventArgs e) {
       for (; ; ) {
         if (!_isConnectedToMachine) continue;
-        if (string.IsNullOrEmpty(_ReceivedMsg)) continue;
-        if (_ReceivedMsg.Contains(ENQ)) {
-          _SenderMsg = ACK;
-        } else if (_ReceivedMsg.Contains(STX)) {
-          if (_ReceivedMsg.Contains(CR) || _ReceivedMsg.Contains(LF)) {
-            _SenderMsg = ACK;
-          } else if (_ReceivedMsg.Contains(GS)) {
-            _SenderMsg = ACK;
-          } else if (_ReceivedMsg.Contains(ETX) || _ReceivedMsg.Contains(ETB)) {
-            _SenderMsg = ACK;
-          } else if (_ReceivedMsg.Contains("<!--:End:Chksum:1:")) {
-            _SenderMsg = ACK;
+        if (string.IsNullOrEmpty(_receiveMsg)) continue;
+        if (_receiveMsg.Contains(ENQ)) {
+          _sendMsg = ACK;
+        } else if (_receiveMsg.Contains(STX)) {
+          if (_receiveMsg.Contains(CR) || _receiveMsg.Contains(LF)) {
+            _sendMsg = ACK;
+          } else if (_receiveMsg.Contains(GS)) {
+            _sendMsg = ACK;
+          } else if (_receiveMsg.Contains(ETX) || _receiveMsg.Contains(ETB)) {
+            _sendMsg = ACK;
+          } else if (_receiveMsg.Contains("<!--:End:Chksum:1:")) {
+            _sendMsg = ACK; _receiveMsg = null;
           }
-        } else if (_ReceivedMsg.Contains(EOT)) {
-          Timer.Change(Timeout.Infinite, Timeout.Infinite);
-          _SenderMsg = null;
-          break;
+        } else if (_receiveMsg.Contains(EOT)) {
+          //_threadTimer.Change(Timeout.Infinite, Timeout.Infinite);
+          _sendMsg = null; _receiveMsg = null;
+          //break;
         }
-        Thread.Sleep(TimeSpan.FromSeconds(_FrameSendIntervalInSeconds));
+        Thread.Sleep(TimeSpan.FromSeconds(_frameSendInSeconds));
       }
     }
 
     #endregion BackgroundWorker Initialization
 
-    public void StartConnection() {
-      if (CommFields == null) return;
-      if (_ConnectionType == ConnectionType.Serial) {
-        _SerialLis = new SerialLis(CommFields);
-        _SerialLis.UpdateSerialMessage += new SerialLis.EventHandlerSerialMessage(UpdateSerialMessage);
-        _SerialLis.UpdateSerialStatus += new SerialLis.EventHandlerSerialStatus(UpdateSerialStatus);
-        _SerialLis.StartSerialPort();
-      } else if (_ConnectionType == ConnectionType.Tcp) {
-        if (_TcpConnMode == TcpConnectionMode.C) {
-          _TcpClientLis = new TcpClientLis(CommFields);
-          _TcpClientLis.UpdateTcpMessage += new TcpClientLis.EventHandlerTcpMessage(UpdateTcpClientMessage);
-          _TcpClientLis.UpdateTcpStatus += new TcpClientLis.EventHandlerTcpStatus(UpdateTcpClientStatus);
-          _TcpClientLis.StartClient();
-        } else if (_TcpConnMode == TcpConnectionMode.S) {
-          _TcpServerLis = new TcpServerLis(CommFields);
-          _TcpServerLis.UpdateTcpMessage += new TcpServerLis.EventHandlerTcpMessage(UpdateTcpServerMessage);
-          _TcpServerLis.UpdateTcpStatus += new TcpServerLis.EventHandlerTcpStatus(UpdateTcpServerStatus);
-          _TcpServerLis.StartServer();
+
+    #region TcpSerial Connection Init
+
+    public void StartTcpSerialConnection() {
+      if (_communicationFields == null) return;
+      if (_connType == ConnectionType.Serial) {
+        _serialLis = new SerialLis(_communicationFields);
+        _serialLis.UpdateSerialMessage += new SerialLis.EventHandlerSerialMessage(UpdateSerialMessage);
+        _serialLis.UpdateSerialStatus += new SerialLis.EventHandlerSerialStatus(UpdateSerialStatus);
+        _serialLis.StartSerialPort();
+      } else if (_connType == ConnectionType.Tcp) {
+        if (_tcpConnMode == TcpConnectionMode.C) {
+          _tcpClientLis = new TcpClientLis(_communicationFields);
+          _tcpClientLis.UpdateTcpMessage += new TcpClientLis.EventHandlerTcpMessage(UpdateTcpClientMessage);
+          _tcpClientLis.UpdateTcpStatus += new TcpClientLis.EventHandlerTcpStatus(UpdateTcpClientStatus);
+          _tcpClientLis.StartClient();
+        } else if (_tcpConnMode == TcpConnectionMode.S) {
+          _tcpServerLis = new TcpServerLis(_communicationFields);
+          _tcpServerLis.UpdateTcpMessage += new TcpServerLis.EventHandlerTcpMessage(UpdateTcpServerMessage);
+          _tcpServerLis.UpdateTcpStatus += new TcpServerLis.EventHandlerTcpStatus(UpdateTcpServerStatus);
+          _tcpServerLis.StartServer();
         }
       }
     }
 
+    #endregion TcpSerial Connection Init
+
+
+    #endregion Init Component
+
+
     #region Tcp Server Msg And Status
 
     private void UpdateTcpServerMessage(string message) {
-      
+      _receiveMsg = message;
+      lock(_tcpMsgStatus._messageLock) {
+        string msg = CurrentDateTime + "R(" + message.Length + "){" + ConvertCtrlCharToStr(message) + "}";
+        _tcpMsgStatus.MessageCollection.Add(msg);
+      }
     }
 
     private void UpdateTcpServerStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
+      lock (_tcpMsgStatus._statusLock) {
+        _tcpMsgStatus.StatusCollection.Add(status);
+      }
     }
 
     #endregion Tcp Server Msg And Status
@@ -164,88 +201,93 @@ namespace LIS {
     #region Tcp Client Msg And Status
 
     private void UpdateTcpClientMessage(string message) {
-      
+      _receiveMsg = message;
+
+      lock (_tcpMsgStatus._messageLock) {
+        string msg = CurrentDateTime + "R(" + message.Length + "){" + ConvertCtrlCharToStr(message) + "}";
+        _tcpMsgStatus.MessageCollection.Add(msg);
+      }
     }
 
     private void UpdateTcpClientStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
+      lock (_tcpMsgStatus._statusLock) {
+        _tcpMsgStatus.StatusCollection.Add(status);
+      }
+    }
+
+    private void SendTcpCSMsg() {
+      lock (_tcpMsgStatus._messageLock) {
+        string message = CurrentDateTime + "S(" + _sendMsg.Length + "){" + ConvertCtrlCharToStr(_sendMsg) + "}";
+        _tcpMsgStatus.MessageCollection.Add(message);
+      }
     }
 
     #endregion Tcp Client Msg And Status
 
 
     #region Serial Msg And Status
-    SynchronizationContext capturedSynchronizationContext = SynchronizationContext.Current;
+    
     private void UpdateSerialMessage(string message) {
-      _ReceivedMsg = message;
-      lock (serialMsgStatusColl._messgeLock) {
-        serialMsgStatusColl.MessageCollection.Add(ConvertCtrlCharToStr(message));
+      _receiveMsg = message;
+      lock (_serialMsgStatus._messgeLock) {
+        string msg = CurrentDateTime + "R(" + message.Length + "){" + ConvertCtrlCharToStr(message) + "}";
+        _serialMsgStatus.MessageCollection.Add(ConvertCtrlCharToStr(msg));
       }
     }
 
-    private void SenderMessage(string sendMsg) {
-      lock (serialMsgStatusColl._messgeLock) {
-        serialMsgStatusColl.MessageCollection.Add(sendMsg);
+    private void SendSerialMsg() {
+      lock (_serialMsgStatus._messgeLock) {
+        string message = CurrentDateTime + "S(" + _sendMsg.Length + "){" + ConvertCtrlCharToStr(_sendMsg) + "}";
+        _serialMsgStatus.MessageCollection.Add(message);
       }
     }
 
 
     private void UpdateSerialStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
-      lock (serialMsgStatusColl._statusLock) {
-        serialMsgStatusColl.StatusCollection.Add(status);
+      lock (_serialMsgStatus._statusLock) {
+        _serialMsgStatus.StatusCollection.Add(status);
       }
     }
 
     #endregion Serial Msg And Status
 
-    private void SendMeesageToMachine() {
-      if (_ConnectionType == ConnectionType.Serial) {
-        _SerialLis.SendMessage(_SenderMsg);
-      } else if (_ConnectionType == ConnectionType.Tcp) {
-        if (_TcpConnMode == TcpConnectionMode.C) {
-          _TcpClientLis.Send(_SenderMsg);
-        } else if (_TcpConnMode == TcpConnectionMode.S) {
-          _TcpServerLis.Send(_SenderMsg);
-        }
-      }
-    }
+
+    #region SendOrder To Machine
 
     public void SendOrderToMachine() {
       StartBackgroundWorker();
-      BackgroundWorker bgWorker = new BackgroundWorker();
-      bgWorker.DoWork += BgWorker_DoWork;
-      bgWorker.RunWorkerCompleted += BgWorker_RunWorkerCompleted;
-      if (!bgWorker.IsBusy) {
-        bgWorker.RunWorkerAsync();
+      BackgroundWorker SenMsgBgWork = new BackgroundWorker();
+      SenMsgBgWork.DoWork += SendMsgBgWork_DoWork;
+      SenMsgBgWork.RunWorkerCompleted += SendMsgRunWork_Completed;
+      if (!SenMsgBgWork.IsBusy) {
+        SenMsgBgWork.RunWorkerAsync();
       }
     }
 
-    private void BgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+    private void SendMsgRunWork_Completed(object sender, RunWorkerCompletedEventArgs e) {
       
     }
 
-    private void BgWorker_DoWork(object sender, DoWorkEventArgs e) {
+    private void SendMsgBgWork_DoWork(object sender, DoWorkEventArgs e) {
       int ri = 0;
       List<string> recordArray = GetOrderFromSpectrum();
-      _SenderMsg = ENQ;
+      _sendMsg = ENQ;
       while (ri < recordArray.Count) {
         if (!_isConnectedToMachine) continue;
-        if (_ReceivedMsg == ACK) {
-          _SenderMsg = recordArray[ri];
-          _ReceivedMsg = "";
+        if (_receiveMsg == ACK) {
+          _sendMsg = recordArray[ri];
+          _receiveMsg = "";
           ri++;
-        } else if (_ReceivedMsg == NAK) {
-          _SenderMsg = null;
-          Timer.Change(Timeout.Infinite, Timeout.Infinite);
+        } else if (_receiveMsg == NAK) {
+          _sendMsg = null; _receiveMsg = null;
           break;
         }
         Thread.Sleep(TimeSpan.FromSeconds(12));
       }
-      //_ReceivedMsg.Contains(ACK)
-      if (_SenderMsg.Contains("L")) {
-        _SenderMsg = EOT; _ReceivedMsg = "";
-        //Timer.Change(Timeout.Infinite, Timeout.Infinite);
+      if (_sendMsg.Contains("L")) {
+        _sendMsg = EOT; _receiveMsg = "";
       }
     }
 
@@ -260,6 +302,12 @@ namespace LIS {
       }
       return orderList;
     }
+
+    #endregion SendOrder To Machine
+
+
+    #region Communication Protocol
+
 
     private string ConvertCtrlCharToStr(string ctrlChar) {
       ctrlChar = ctrlChar.Replace(SOH, "<SOH>");
@@ -305,6 +353,9 @@ namespace LIS {
     readonly string FS = char.ConvertFromUtf32(28);
     readonly string GS = char.ConvertFromUtf32(29);
     readonly string RS = char.ConvertFromUtf32(30);
+
+    #endregion Communication Protocol
+
 
     public enum ConnectionType {
       Serial,
@@ -357,18 +408,23 @@ namespace LIS {
 
     public object _messgeLock = new object();
     public object _statusLock = new object();
-    
 
     public ObservableCollection<string> MessageCollection { get; set; }
     public ObservableCollection<string> StatusCollection { get; set; }
+
   }
 
   public class TcpMesageStatus {
 
     public TcpMesageStatus() {
       MessageCollection = new ObservableCollection<string>();
+      BindingOperations.EnableCollectionSynchronization(MessageCollection, _messageLock);
       StatusCollection = new ObservableCollection<string>();
+      BindingOperations.EnableCollectionSynchronization(StatusCollection, _statusLock);
     }
+
+    public object _messageLock = new object();
+    public object _statusLock = new object();
 
     public ObservableCollection<string> MessageCollection { get; set; }
     public ObservableCollection<string> StatusCollection { get; set; }
