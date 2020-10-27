@@ -25,18 +25,6 @@ namespace LISFramework {
     private void Window_Loaded(object sender, RoutedEventArgs e) {
         
     }
-
-    private void TabCtrl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-      TabItem tbI = tabCtrl.SelectedItem as TabItem;
-      if (e.Source is TabControl) {
-        switch ((tbI.Name)) {
-          case "tbLisComm": {
-              LisComm lisComm = new LisComm();
-              tbLisComm.Content = lisComm;
-            }
-            break;
-        }
-      }
-    }
+    
   }
 }

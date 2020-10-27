@@ -387,6 +387,13 @@ namespace LIS {
       SpectrumAnalyzer
     }
 
+    public enum OrderType {
+      O,
+      Q
+    }
+
+
+
   }
 
   [Serializable]
@@ -457,7 +464,7 @@ namespace LIS {
 
     public string PatLName { get; set; }
 
-    public string DOB { get; set; }
+    public DateTime DOB { get; set; }
 
     public string Gender { get; set; }
 
@@ -467,9 +474,9 @@ namespace LIS {
 
     public string TestName { get; set; }
 
-    public string BgnTestDateTime { get; set; }
+    public DateTime BgnTestDateTime { get; set; } = DateTime.Now;
 
-    public string EndTestDateTime { get; set; }
+    public DateTime EndTestDateTime { get; set; } = DateTime.Now;
 
     public string OrderType { get; set; }
 

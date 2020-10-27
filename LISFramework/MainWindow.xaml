@@ -6,19 +6,28 @@
         xmlns:local="clr-namespace:LISFramework"
         xmlns:VM="clr-namespace:LISFramework.ViewModel"
         mc:Ignorable="d" Loaded="Window_Loaded"
-        Title="MainWindow" Height="700" Width="1500" WindowState="Maximized">
-  
+        xmlns:LisComm="clr-namespace:LISFramework" WindowState="Maximized"
+        Title="MainWindow" Height="700" Width="1500" WindowStartupLocation="CenterOwner">
   <Window.Resources>
     <VM:MainWindowViewModel x:Key="mainwindowViewVM"/>
   </Window.Resources>
-  <StackPanel DataContext="{Binding Source={StaticResource mainwindowViewVM}}">
-    <ToolBarTray>
-      <ToolBar>
-        <Button  Content="Settings" Command="{Binding SettingCommand}" />
-      </ToolBar>
-    </ToolBarTray>
-    <TabControl x:Name="tabCtrl" SelectionChanged="TabCtrl_SelectionChanged">
-      <TabItem x:Name="tbLisComm" Header="LIS"/>
-    </TabControl>
-  </StackPanel>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <StackPanel DataContext="{Binding Source={StaticResource mainwindowViewVM}}" Grid.Row="0">
+      <ToolBarTray>
+        <ToolBar>
+          <Button  Content="Settings" Command="{Binding SettingCommand}" />
+        </ToolBar>
+      </ToolBarTray>
+
+    </StackPanel>
+    <Grid Grid.Row="1">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <LisComm:LisComm x:Name="LisUserCtrl"/>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
 </Window>

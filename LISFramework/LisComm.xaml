@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LISFramework"
-             xmlns:VM="clr-namespace:LISFramework.ViewModel"
-             xmlns:xceed="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:VM="clr-namespace:LISFramework.ViewModel" 
+             xmlns:xceed="http://schemas.xceed.com/wpf/xaml/toolkit" 
              mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1500" Background="White">
   <UserControl.Resources>
     <VM:LisCommVM x:Key="lisCommVM"/>
@@ -74,24 +74,32 @@
                 Content="Request" Margin="10,10,0,0" Width="100" Height="35" Command="{Binding SendOrder}" />
       </StackPanel>
     </StackPanel>
-    <StackPanel Grid.Row="2">
+    <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top">
       <TabControl x:Name="tbControlLog"  TabStripPlacement="Top">
-        <TabItem x:Name="tbSys" Header="Tcp System">
-          <StackPanel>
-            <ListBox x:Name="lblTcpStatus" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1470" Margin="5" ItemsSource="{Binding TcpMsgColl}"/>
-            <ListBox x:Name="lbTcpComm" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="1470" ItemsSource="{Binding TcpStatusColl}"/>
-          </StackPanel>
+        <TabItem x:Name="tbSys" Header="Tcp System" HorizontalAlignment="Left" VerticalAlignment="Top">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="200"/>
+              <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="lblTcpStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="1300"  ItemsSource="{Binding TcpMsgColl}"/>
+            <ListBox x:Name="lbTcpComm" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Height="150" Width="1300" ItemsSource="{Binding TcpStatusColl}"/>
+          </Grid>
         </TabItem>
-        <TabItem x:Name="tbSerialSys" Header="Serial System">
-          <StackPanel>
-            <ListBox x:Name="lbSerialSys" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1460" Margin="5" ItemsSource="{Binding SerialStatusColl}"/>
-            <ListBox x:Name="lbSerialComm" Height="210" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1460" Margin="5" ItemsSource="{Binding SerialMsgColl}"/>
-          </StackPanel>
+        <TabItem x:Name="tbSerialSys" Header="Serial System" HorizontalAlignment="Left" VerticalAlignment="Top">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="200"/>
+              <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="lbSerialSys" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="1300"  Margin="10" ItemsSource="{Binding SerialStatusColl}"/>
+            <ListBox x:Name="lbSerialComm" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="1300"  Margin="10" ItemsSource="{Binding SerialMsgColl}"/>
+          </Grid>
         </TabItem>
         <TabItem x:Name="tabLog" Header="Log">
           <ListBox x:Name="lbLog" Height="450" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="1478" Margin="5"/>
         </TabItem>
       </TabControl>
-    </StackPanel>
+    </Grid>
   </Grid>
 </UserControl>

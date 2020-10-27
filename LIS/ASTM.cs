@@ -148,7 +148,10 @@ namespace LIS {
     public override string CreatePatientRecord() {
       string patId = (_lisPatFields.PatientId == null || _lisPatFields.PatientId == "") ? Sepreator : _lisPatFields.PatientId;
       string patientName = _lisPatFields.PatFName + " " + _lisPatFields.PatMName + " " + _lisPatFields.PatLName;
-      string patDob = (_lisPatFields.DOB == null || _lisPatFields.DOB == "") ? Sepreator : _lisPatFields.DOB;
+      string patDob = Sepreator;
+      if (_lisPatFields.DOB != DateTime.MinValue) {
+        patDob = ((DateTime)_lisPatFields.DOB).ToString("yyyyMMdd");
+      }
       string patGender = (_lisPatFields.Gender == null || _lisPatFields.Gender == "") ? Sepreator : _lisPatFields.Gender;
       string patInfo = PatientR + "1" + Sepreator + patId + Sepreator + Sepreator + Sepreator
                      + patientName + Sepreator + Sepreator + patDob + Sepreator + patGender
@@ -159,10 +162,20 @@ namespace LIS {
     }
 
     public override string CreateRequestRecord() {
+
+      string bgnDate = DateTime.Now.ToString("yyyyMMdd");
+      if (_lisPatFields.BgnTestDateTime != DateTime.MinValue) {
+        bgnDate = _lisPatFields.BgnTestDateTime.ToString("yyyyMMdd") + "000000";
+      }
+
+      string endDate = DateTime.Now.ToString("yyyyMMdd");
+      if (_lisPatFields.EndTestDateTime != DateTime.MinValue) {
+        endDate = _lisPatFields.EndTestDateTime.ToString("yyyyMMdd") + "000000";
+      }
+      
+
       string reqInfo = RequestR + Sepreator + "1" + Sepreator + "ALL" + Sepreator + Sepreator
-                      + "ALL" + Sepreator + Sepreator + DateTime.Now.ToString("yyyyMMdd") 
-                      + "000000" 
-                      + Sepreator + DateTime.Now.ToString("yyyyMMdd") + "000000";
+                      + "ALL" + Sepreator + Sepreator + bgnDate + Sepreator + endDate;
       return reqInfo;
     }
 
