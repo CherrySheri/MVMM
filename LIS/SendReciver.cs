@@ -284,7 +284,7 @@ namespace LIS {
 
     private void SendMsgBgWork_DoWork(object sender, DoWorkEventArgs e) {
       int ri = 0;
-      List<string> recordArray = GetOrderFromSpectrum();
+      List<string> recordArray = GetOrderList(); //GetOrderFromSpectrum();
       _sendMsg = ENQ;
       while (ri < recordArray.Count) {
         if (!_isConnectedToMachine) continue;
@@ -325,6 +325,14 @@ namespace LIS {
       return orderList;
     }
 
+
+    private List<string> GetOrderList() {
+      List<string> orderList = new List<string>();
+      if (_communicationFields.PathoMachine == PathoMachine.SpectrumAnalyzer) {
+        orderList = GetOrderFromSpectrum();
+      }
+      return orderList;
+    }
     
 
 
@@ -398,14 +406,11 @@ namespace LIS {
     }
 
     public enum OrderType {
-      Query,
-      Order
+      Q,
+      O
     }
 
-    public enum Gender {
-      Male,
-      Female
-    }
+    
 
   }
 
@@ -430,6 +435,9 @@ namespace LIS {
     public SendReciver.TcpConnectionMode TcpMode { get; set; }
 
     public SendReciver.ConnectionType ConnType { get; set; }
+
+    public SendReciver.PathoMachine PathoMachine { get; set; }
+
 
   }
 
@@ -492,6 +500,12 @@ namespace LIS {
     public DateTime EndTestDateTime { get; set; } = DateTime.Now;
 
     public string OrderType { get; set; }
+
+    public enum GenderEnum {
+      M,
+      F,
+      O
+    }
 
 
   }

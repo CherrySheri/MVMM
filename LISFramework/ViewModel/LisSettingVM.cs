@@ -16,12 +16,18 @@ namespace LISFramework.ViewModel {
 
     
     private CommunicationFields _commFields;
-    
+    private JsonWR _jsonWR;
+
 
     public LisSettingVM() {
-      _commFields = new CommunicationFields();
+      _jsonWR = new JsonWR();
+      _commFields =_jsonWR.ReadJsonFile();
+      if (_commFields == null) {
+        _commFields = new CommunicationFields();
+      }
       ConnectionTypeIEnumerable = Enum.GetNames(typeof(SendReciver.ConnectionType));
       TcpConnModeIEnumerable = Enum.GetNames(typeof(SendReciver.TcpConnectionMode));
+      PathoMachineIEnumberable = Enum.GetNames(typeof(SendReciver.PathoMachine));
     }
 
     public CommunicationFields CommFields {
@@ -97,9 +103,18 @@ namespace LISFramework.ViewModel {
       }
     }
 
+
+
+
+
+
+
     public IEnumerable<string> ConnectionTypeIEnumerable { get; set; }
 
     public IEnumerable<string> TcpConnModeIEnumerable { get; set; }
+
+    public IEnumerable<string> PathoMachineIEnumberable { get; set; }
+
 
 
     ICommand _SaveCommand;
@@ -114,8 +129,7 @@ namespace LISFramework.ViewModel {
     }
 
     private void SaveCommand_Execute() {
-      JsonWR jsonWR = new JsonWR();
-      jsonWR.WriteSerialJsonFile(_commFields);
+      _jsonWR.WriteSerialJsonFile(_commFields);
     }
 
 

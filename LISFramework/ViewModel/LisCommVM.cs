@@ -17,6 +17,8 @@ namespace LISFramework.ViewModel {
       JsonWR jsonR = new JsonWR();
       commFields = jsonR.ReadJsonFile();
       _lisPatFields = new LisPatientFields();
+      GenderList = Enum.GetNames(typeof(LisPatientFields.GenderEnum));
+      OrderList = Enum.GetNames(typeof(SendReciver.OrderType));
       serialMsgStatus = new SerialMessageStatus(); tcpMsgStatus = new TcpMesageStatus();
       sendR = new SendReciver(commFields, serialMsgStatus, tcpMsgStatus, _lisPatFields);
       sendR.InitializeConnection();
@@ -32,6 +34,10 @@ namespace LISFramework.ViewModel {
     LisPatientFields _lisPatFields { get; set; }
 
     #endregion Private Variables
+
+    public IEnumerable<string> GenderList { get; set; }
+
+    public IEnumerable<string> OrderList { get; set; }
 
     public ICommand SendOrder {
       get {

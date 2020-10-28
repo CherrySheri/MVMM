@@ -40,11 +40,13 @@
         </StackPanel>
         <StackPanel Margin="5,0,0,0">
           <TextBlock x:Name="lblGender" Text="Gender" HorizontalAlignment="Left" Margin="5,5,0,0"/>
-          <TextBox x:Name="txtGender" Width="50" Height="35" Margin="5,5,0,0" Text="{Binding LisPatFields.Gender}"/>
+          <ComboBox x:Name="cbGender" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
+                      ItemsSource="{Binding GenderList}" SelectedItem="{Binding LisPatFields.Gender}" IsSynchronizedWithCurrentItem="True"/> 
         </StackPanel>
         <StackPanel Margin="5,0,0,0">
           <TextBlock x:Name="lblOrderType" Text="Order Type" HorizontalAlignment="Left" Margin="5,5,0,0"/>
-          <TextBox x:Name="txtOrderType" Width="50" Height="35" Margin="5,5,0,0" Text="{Binding LisPatFields.OrderType}"/>
+          <ComboBox x:Name="cbOrder" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90"
+                      ItemsSource="{Binding OrderList}" SelectedItem="{Binding LisPatFields.OrderType}" IsSynchronizedWithCurrentItem="True"/>
         </StackPanel>
       </StackPanel>
       <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
