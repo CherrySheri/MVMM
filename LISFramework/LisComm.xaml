@@ -65,12 +65,13 @@
         <StackPanel Margin="5,0,0,0">
           <TextBlock x:Name="lblBgnResultDate" Text="Begin Result Date" HorizontalAlignment="Left" Margin="5,5,0,0" />
           <DatePicker x:Name="dateBgnResult" HorizontalContentAlignment="Center" FontSize="14" VerticalAlignment="Top" 
-                      Width="120" Height="35" Margin="5,5,0,0" Text="{Binding LisPatFields.BgnTestDateTime}"/>
+                      Width="120" Height="35" Margin="5,5,0,0" SelectedDate="{Binding LisPatFields.BgnTestDateTime}"/>
         </StackPanel>
         <StackPanel Margin="10,0,0,0">
           <TextBlock x:Name="lblEndResultDate" Text="End Result Date" HorizontalAlignment="Left" Margin="5,5,0,0" />
           <DatePicker x:Name="dateEndResult" HorizontalContentAlignment="Center" 
-                      FontSize="14" VerticalAlignment="Top" Width="120" Height="35" Margin="5,5,0,0" Text="{Binding LisPatFields.EndTestDateTime}"/>
+                      FontSize="14" VerticalAlignment="Top" Width="120" Height="35" Margin="5,5,0,0" 
+                      SelectedDate="{Binding LisPatFields.EndTestDateTime}"/>
         </StackPanel>
         <Button x:Name="btnRequest" HorizontalAlignment="Center" VerticalAlignment="Center" 
                 Content="Request" Margin="10,10,0,0" Width="100" Height="35" Command="{Binding SendOrder}" />

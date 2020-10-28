@@ -495,9 +495,9 @@ namespace LIS {
 
     public string TestName { get; set; }
 
-    public DateTime BgnTestDateTime { get; set; } = DateTime.Now;
+    public DateTime BgnTestDateTime { get; set; } = DateTime.Today.Date;
 
-    public DateTime EndTestDateTime { get; set; } = DateTime.Now;
+    public DateTime EndTestDateTime { get; set; } = DateTime.Today.Date;
 
     public string OrderType { get; set; }
 

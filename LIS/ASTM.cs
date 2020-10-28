@@ -163,12 +163,12 @@ namespace LIS {
 
     public override string CreateRequestRecord() {
 
-      string bgnDate = DateTime.Now.ToString("yyyyMMdd");
+      string bgnDate = DateTime.Now.ToString("yyyyMMdd") + "000000";
       if (_lisPatFields.BgnTestDateTime != DateTime.MinValue) {
         bgnDate = _lisPatFields.BgnTestDateTime.ToString("yyyyMMdd") + "000000";
-      }
+      } 
 
-      string endDate = DateTime.Now.ToString("yyyyMMdd");
+      string endDate = DateTime.Now.ToString("yyyyMMdd") + "000000";
       if (_lisPatFields.EndTestDateTime != DateTime.MinValue) {
         endDate = _lisPatFields.EndTestDateTime.ToString("yyyyMMdd") + "000000";
       }
