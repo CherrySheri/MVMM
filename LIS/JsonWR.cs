@@ -26,20 +26,18 @@ namespace LIS {
       if (File.Exists(GetCommJsonFile)) {
         File.Delete(GetCommJsonFile);
       }
-      //open file stream
       using (StreamWriter file = File.CreateText(GetCommJsonFile)) {
         JsonSerializer serializer = new JsonSerializer();
-        //serialize object directly into file stream
         serializer.Serialize(file, commFields);
       }
     }
 
     public CommunicationFields ReadJsonFile() {
-      CommunicationFields serialF = null;
+      CommunicationFields communicationField = null;
       if (File.Exists(GetCommJsonFile)) {
-        serialF = JsonConvert.DeserializeObject<CommunicationFields>(File.ReadAllText(GetCommJsonFile));
+        communicationField = JsonConvert.DeserializeObject<CommunicationFields>(File.ReadAllText(GetCommJsonFile));
       }
-      return serialF;
+      return communicationField;
 
     }
   }

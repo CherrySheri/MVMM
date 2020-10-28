@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASTM.cs" />
+    <Compile Include="ClsLog.cs" />
     <Compile Include="JsonWR.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendReciver.cs" />

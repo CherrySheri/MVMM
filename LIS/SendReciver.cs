@@ -47,6 +47,8 @@ namespace LIS {
 
     private LisPatientFields _lisPatFields { get; set; }
 
+    private ClsLog _clsLog { get; set; }
+
 
 
     #endregion Private Fields
@@ -66,6 +68,7 @@ namespace LIS {
         this._tcpMsgStatus   = messageStatus;
         _lisPatFields = lisPatF;
       }
+      _clsLog = new ClsLog();
     }
     #endregion Constructor
 
@@ -186,6 +189,7 @@ namespace LIS {
       _receiveMsg = message;
       lock(_tcpMsgStatus._messageLock) {
         string msg = CurrentDateTime + "R(" + message.Length + "){" + ConvertCtrlCharToStr(message) + "}";
+        _clsLog.WriteTcpMessgeLog(msg);
         _tcpMsgStatus.MessageCollection.Add(msg);
       }
     }
@@ -193,6 +197,7 @@ namespace LIS {
     private void UpdateTcpServerStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
       lock (_tcpMsgStatus._statusLock) {
+        _clsLog.WriteTcpStatusLog(status);
         _tcpMsgStatus.StatusCollection.Add(status);
       }
     }
@@ -204,9 +209,9 @@ namespace LIS {
 
     private void UpdateTcpClientMessage(string message) {
       _receiveMsg = message;
-
       lock (_tcpMsgStatus._messageLock) {
         string msg = CurrentDateTime + "R(" + message.Length + "){" + ConvertCtrlCharToStr(message) + "}";
+        _clsLog.WriteTcpMessgeLog(msg);
         _tcpMsgStatus.MessageCollection.Add(msg);
       }
     }
@@ -214,6 +219,7 @@ namespace LIS {
     private void UpdateTcpClientStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
       lock (_tcpMsgStatus._statusLock) {
+        _clsLog.WriteTcpStatusLog(status);
         _tcpMsgStatus.StatusCollection.Add(status);
       }
     }
@@ -221,6 +227,7 @@ namespace LIS {
     private void SendTcpCSMsg() {
       lock (_tcpMsgStatus._messageLock) {
         string message = CurrentDateTime + "S(" + _sendMsg.Length + "){" + ConvertCtrlCharToStr(_sendMsg) + "}";
+        _clsLog.WriteTcpMessgeLog(message);
         _tcpMsgStatus.MessageCollection.Add(message);
       }
     }
@@ -234,6 +241,7 @@ namespace LIS {
       _receiveMsg = message;
       lock (_serialMsgStatus._messgeLock) {
         string msg = CurrentDateTime + "R(" + message.Length + "){" + ConvertCtrlCharToStr(message) + "}";
+        _clsLog.WriteSerialMsgLog(msg);
         _serialMsgStatus.MessageCollection.Add(ConvertCtrlCharToStr(msg));
       }
     }
@@ -241,6 +249,7 @@ namespace LIS {
     private void SendSerialMsg() {
       lock (_serialMsgStatus._messgeLock) {
         string message = CurrentDateTime + "S(" + _sendMsg.Length + "){" + ConvertCtrlCharToStr(_sendMsg) + "}";
+        _clsLog.WriteSerialMsgLog(message);
         _serialMsgStatus.MessageCollection.Add(message);
       }
     }
@@ -249,6 +258,7 @@ namespace LIS {
     private void UpdateSerialStatus(string status, bool isConnected) {
       _isConnectedToMachine = isConnected;
       lock (_serialMsgStatus._statusLock) {
+        _clsLog.WriteSerialMsgLog(status);
         _serialMsgStatus.StatusCollection.Add(status);
       }
     }
@@ -388,11 +398,14 @@ namespace LIS {
     }
 
     public enum OrderType {
-      O,
-      Q
+      Query,
+      Order
     }
 
-
+    public enum Gender {
+      Male,
+      Female
+    }
 
   }
 
