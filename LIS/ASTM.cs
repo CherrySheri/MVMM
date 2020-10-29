@@ -172,10 +172,14 @@ namespace LIS {
       if (_lisPatFields.EndTestDateTime != DateTime.MinValue) {
         endDate = _lisPatFields.EndTestDateTime.ToString("yyyyMMdd") + "000000";
       }
+
+
+      string sampleId = string.IsNullOrEmpty(_lisPatFields.SampleId) ? "ALL" : "^" + _lisPatFields.SampleId;
+      string methodId = string.IsNullOrEmpty(_lisPatFields.MethoId) ? "ALL" : "^^^" + _lisPatFields.MethoId;
       
 
-      string reqInfo = RequestR + Sepreator + "1" + Sepreator + "ALL" + Sepreator + Sepreator
-                      + "ALL" + Sepreator + Sepreator + bgnDate + Sepreator + endDate;
+      string reqInfo = RequestR + Sepreator + "1" + Sepreator + sampleId + Sepreator + Sepreator
+                      + methodId + Sepreator + Sepreator + bgnDate + Sepreator + endDate;
       return reqInfo;
     }
 
